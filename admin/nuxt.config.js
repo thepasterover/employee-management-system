@@ -66,7 +66,10 @@ export default {
           success: colors.green.accent3,
           lightpurple: '#BABBCD',
           headpurple: '#8CA9C6',
-          mainpurple: '#645DF6'
+          mainpurple: '#645DF6',
+          textheadpurple: '#151542',
+          subtextgrey: '#9896B0',
+
         }
       }
     }

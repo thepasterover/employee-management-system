@@ -6,13 +6,13 @@
         <v-icon  class="pr-2 ml-n2">
           mdi-plus-box
         </v-icon>
-        New Employee
+         New Employee
       </v-btn>
     </template>
     <v-card>
       <v-container>
       <v-card-title>
-        <h3>Add Employee</h3>
+        <h3 class="textheadpurple--text">Add Employee</h3>
       </v-card-title>
       <v-card-text>
           <v-form ref="form">

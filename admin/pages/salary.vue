@@ -3,11 +3,13 @@
     <v-data-table
     :headers=headers
     :items=items
+    :search="formattedMonth"
     >
       <template v-slot:top>
         <v-toolbar
         flat
          class="mb-3">
+        
         <v-toolbar-title>Salary</v-toolbar-title>
         <v-divider
           class="mx-4"
@@ -15,39 +17,28 @@
           vertical
         ></v-divider>
         <v-spacer></v-spacer>
+        <v-col cols="3" sm="2">
         <v-menu offset-y >
-            <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-            color="mainpurple"
-            label="Sort by Month" 
-            :value="formattedMonth"
-            v-bind="attrs" 
-            v-on="on"
-            class="mt-5"
-            >
-            </v-text-field>
-            </template>
-            <v-date-picker
-            v-model="monthSort"
-            type="monthSort"
-            color="mainpurple"
-            elevation="0"
-            ></v-date-picker>
+          <template v-slot:activator="{ on, attrs }">
+          <v-text-field
+          color="mainpurple"
+          label="Sort by Month" 
+          :value="formattedMonth"
+          v-bind="attrs" 
+          v-on="on"
+          class="mt-5"
+          >
+          </v-text-field>
+          </template>
+          <v-date-picker
+          v-model="monthSort"
+          type="monthSort"
+          color="mainpurple"
+          elevation="0"
+          ></v-date-picker>
         </v-menu>
-        <v-spacer></v-spacer>
-        <v-select
-        :items="employees"
-        label="Sort By Employee"
-        v-model="employeeSort"
-        flat
-        class="mt-5"
-        color="mainpurple"
-        ></v-select>
-        <v-spacer></v-spacer>
-        <v-btn color="mainpurple" class="white--text text-capitalize" @click="sortByMonth">Sort</v-btn>
-        <v-spacer></v-spacer>
+        </v-col>
         <sal-popup @add-salary="addToSalary"></sal-popup>
-        
         </v-toolbar>
       </template>
 
@@ -76,7 +67,7 @@
               <v-select
               :items="employees"
               label="Edit Employee"
-              v-model="employee"
+              v-model="props.item.employee"
               ></v-select>
             </template>
         </v-edit-dialog>
@@ -125,12 +116,11 @@ export default {
     },
     data() {
       return {
-        employee : '',
-        monthSort : null,
+        monthSort : '',
         employeeSort: '',
         employees: [
         'All',
-        'Raju',
+        'Raju Sharma',
         'Krishna'
         ],
         headers: [
@@ -145,7 +135,7 @@ export default {
         items: [
           {
             date: '20 Oct 2020',
-            employee: 'Raju Sharma',
+            employee: 'Krishna',
             salary: '29000',
             month: 'Nov',
             type: 'Advance',
@@ -177,16 +167,15 @@ export default {
         this.items = this.items.filter(i => i !== item)
       },
 
-      sortByMonth() {
-        console.log(this.formattedMonth)
+      logSort() {
         console.log(this.monthSort)
-        this.items.filter(i => i.month === this.formattedMonth.toString())
       }
+
       
     },
     computed: {
         formattedMonth(){
-          return this.monthSort ? moment(this.monthSort).format('MMM') : ''
+          return this.monthSort ? moment(this.monthSort).format('MMM').toString() : ''
         }
     }
 }

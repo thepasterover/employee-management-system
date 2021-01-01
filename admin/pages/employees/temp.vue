@@ -36,8 +36,7 @@
 </template>
 
 <script>
-import Popup from '~/components/popup.vue';
-import { popup } from "../components/popup";
+import Popup from '../../components/popup';
 export default {
     components: {
       Popup
