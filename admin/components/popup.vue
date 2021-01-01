@@ -31,12 +31,6 @@
             ></v-text-field>
             <v-text-field
             color="mainpurple"
-            label="Salary" 
-            v-model="salary"
-            >
-            </v-text-field>
-            <v-text-field
-            color="mainpurple"
             label="Designation" 
             v-model="designation"
             :rules="designationRules"
@@ -60,7 +54,6 @@ export default {
       dialog: false,
       item: null,
       joined: null,
-      salary: '',
       name: '',
       designation: '',
       nameRules: [
@@ -77,17 +70,15 @@ export default {
     submit() {
       if(this.$refs.form.validate()){
         this.item = {
-          j_date: this.formattedDate,
+          date: this.joined,
           name: this.name,
-          salary: this.salary,
-          designation: this.designation
+          desg: this.designation,
         }
         this.$emit('add-employee', this.item)
         this.item = null
         this.dialog=false
         this.joined = null
         this.name = ''
-        this.salary = ''
         this.designation = ''
       }
     }
