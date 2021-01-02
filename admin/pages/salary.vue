@@ -10,7 +10,7 @@
         flat
          class="mb-3">
         
-        <v-toolbar-title>Salary</v-toolbar-title>
+        <v-toolbar-title class="textheadpurple--text">Salary</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
@@ -32,7 +32,7 @@
           </template>
           <v-date-picker
           v-model="monthSort"
-          type="monthSort"
+          type="month"
           color="mainpurple"
           elevation="0"
           ></v-date-picker>
@@ -56,6 +56,7 @@
               </v-text-field>
             </template>
         </v-edit-dialog>
+
       </template>
 
       <template v-slot:item.employee="props">
@@ -117,66 +118,58 @@ export default {
     data() {
       return {
         monthSort : '',
-        employeeSort: '',
         employees: [
-        'All',
         'Raju Sharma',
         'Krishna'
         ],
         headers: [
-          {text: 'Date', value: 'date', class: 'headpurple--text'},
-          {text: 'Employee Name', value: 'employee', class: 'headpurple--text'},
-          {text: 'Salary', value: 'salary', class: 'headpurple--text'},
-          {text: 'Month', value: 'month', class: 'headpurple--text'},
-          {text: 'Type', value: 'type', class: 'headpurple--text'},
-          {text: 'Actions', value: 'actions', class: 'headpurple--text', sortable: false},
+          {text: 'Date', value: 'date', class: 'textheadpurple--text'},
+          {text: 'Employee Name', value: 'employee.name', class: 'textheadpurple--text'},
+          {text: 'Salary', value: 'salary', class: 'textheadpurple--text'},
+          {text: 'Month', value: 'month', class: 'textheadpurple--text'},
+          {text: 'Type', value: 'type', class: 'textheadpurple--text'},
+          {text: 'Actions', value: 'actions', class: 'textheadpurple--text', sortable: false},
         ],
 
         items: [
-          {
-            date: '20 Oct 2020',
-            employee: 'Krishna',
-            salary: '29000',
-            month: 'Nov',
-            type: 'Advance',
-          },
-          {
-            date: '20 Oct 2020',
-            employee: 'Raju Sharma',
-            salary: '29000',
-            month: 'Dec',
-            type: 'Salary',
-          },
-          {
-            date: '20 Oct 2020',
-            employee: 'Raju Sharma',
-            salary: '29000',
-            month: 'Dec',
-            type: 'Salary',
-          },
         ]
       }
     },
 
     methods: {
-      addToSalary(e) {
+      async addToSalary(e) {
+        try{
+          let d = await this.$axios.$post('admin/salary/add', {
+            date: e.date,
+            salary: e.salary,
+            month: e.month,
+            type: e.type,
+            employee: e.employee
+          })
+          console.log(d)
+        } catch(err) {
+          console.log(err)
+        }
         this.items.push(e)
       },
 
       deleteSalary(item) {
         this.items = this.items.filter(i => i !== item)
       },
-
-      logSort() {
-        console.log(this.monthSort)
+    },
+    async created() {
+      let data = await this.$axios.$get('admin/salary')
+      for(let salary of data.salaries) {
+        this.items.push(salary)
       }
-
-      
     },
     computed: {
-        formattedMonth(){
-          return this.monthSort ? moment(this.monthSort).format('MMM').toString() : ''
-        }
+      // formattedDate(){
+      //   return this.salDate ? moment(this.salDate).format('DD MMM YYYY') : ''
+      // },
+      formattedMonth(){
+        return this.monthSort ? moment(this.monthSort).format('MMM').toString() : ''
+      }
     }
 }
 </script>

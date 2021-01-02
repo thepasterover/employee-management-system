@@ -21,13 +21,15 @@
                 <v-text-field color="mainpurple"
                 label="Date" :value="formattedDate" v-bind="attrs" v-on="on"></v-text-field>
               </template>
-              <v-date-picker v-model="joined" color="mainpurple"></v-date-picker>
+              <v-date-picker v-model="salDate" color="mainpurple"></v-date-picker>
             </v-menu>
             <v-select
             :items="employees"
             label="Employee"
-            v-model="employeeName"
+            v-model="emp_id"
+            item-value="id"
             :rules="inputRules"
+            item-text="name"
             ></v-select>
             <v-text-field
             color="mainpurple"
@@ -78,17 +80,15 @@ export default {
     return {
       dialog: false,
       item: null,
-      joined: null,
+      salDate: '',
       salary: '',
-      employeeName: '',
+      emp_id: '',
       month: '',
       selectItems: [
         'Salary',
         'Advance'
       ],
       employees: [
-        'Raju',
-        'Krishna'
       ],
       selectedType: null,
       inputRules: [
@@ -103,8 +103,8 @@ export default {
     submit() {
       if(this.$refs.form.validate()){
         this.item = {
-          date: this.formattedDate,
-          employee: this.employeeName,
+          date: this.salDate,
+          employee: this.emp_id,
           salary: this.salary,
           month: this.formattedMonth,
           type: this.selectedType
@@ -112,17 +112,30 @@ export default {
         this.$emit('add-salary', this.item)
         this.item = null
         this.dialog=false
-        this.joined = null
-        this.employeeName = ''
+        this.salDate = null
+        this.emp_id = ''
         this.salary = ''
         this.month = ''
         this.type = null
       }
     }
   },
+
+  async created() {
+    let empData = await this.$axios.$get('admin/employees')
+    for (let employee of empData.employees) {
+      let temp = {
+        id: employee._id,
+        name: employee.name
+      }
+      this.employees.push(temp)
+    }
+
+  },
+
   computed: {
     formattedDate(){
-        return this.joined ? moment(this.joined).format('DD MMM YYYY') : ''
+        return this.salDate ? moment(this.salDate).format('DD MMM YYYY') : ''
     },
     formattedMonth(){
         return this.month ? moment(this.month).format('MMMM') : ''

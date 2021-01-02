@@ -1,5 +1,6 @@
 <template>
   <div class="mt-3 pa-2">
+    <edit-dialog  :dialog="dialog" :item="modalItem" @edit-employee="editEmployee"></edit-dialog>
     <v-row justify='end'> 
       <v-col>
         <h2 class="textheadpurple--text"> Employees </h2>
@@ -11,18 +12,18 @@
         </div>
       </v-col>
       <v-col class="ml-4 pt-1" lg="3" cols=12>
-        <v-text-field label="Search by name" outlined dense class="mt-1"> </v-text-field>
+        <v-text-field label="Search by name" outlined dense class="mt-1" v-model="search"> </v-text-field>
       </v-col>
       
     </v-row>
     <v-divider class="mt-n5 mb-4"></v-divider>
     <v-row justify="start" align="center">
-      <v-col v-for="(item, i) in items" :key="i" cols=12 md=4 sm=5>
+      <v-col v-for="(item, i) in resultQuery" :key="i" cols=12 md=4 sm=5>
         <v-card  max-width="320">
           <div class="text-right mt-2 mb-n8">
             <v-col>
               <v-speed-dial
-                transition="slide-y-transition"
+                transition="slide-x-transition"
                 direction="bottom"
                 top
                 right
@@ -36,6 +37,7 @@
                   dark
                   small
                   color="secondary"
+                  @click="openDialog(item)"
                 >
                   <v-icon>mdi-pencil</v-icon>
                 </v-btn>
@@ -45,24 +47,26 @@
                   small
                   color="red"
                   right
-                  @click="delEmployee(i)"
+                  @click="delEmployee(item.id)"
                 >
                   <v-icon>mdi-delete</v-icon>
                 </v-btn>
               </v-speed-dial>
               
             </v-col>
+            
           </div>
+          
           <div class="text-center">
             <v-col class="pa-4 pt-8">
               <NuxtLink :to="`employees/${item.id}`" >
-              <v-avatar
-                color="mainpurple"
-                size="95"
-              >
-              <span class="white--text">VJ</span>
-              </v-avatar>
-              <h3 class="mt-6 textheadpurple--text">{{item.name}}</h3>
+                <v-avatar
+                  color="mainpurple"
+                  size="95"
+                >
+                <span class="white--text">VJ</span>
+                </v-avatar>
+                <h3 class="mt-6 textheadpurple--text">{{item.name}}</h3>
               </NuxtLink>
               <h4 class="subtextgrey--text mt-1">{{formattedDate(item.date)}}</h4>
               <v-row class="mt-0" justify="center" align="center">
@@ -81,20 +85,34 @@
         </v-card>
       </v-col>
     </v-row>
+    
   </div>
 </template>
 
 <script>
+import editDialog from '../../components/editDialog'
 import popup from '../../components/popup.vue'
 import moment from 'moment'
 export default {
-  components: { popup },
+  components: { popup, editDialog },
   data() {
     return {
-      items: []
+      modalItem: null,
+      items: [],
+      search: '',
+      // items: 
+      //   {id: 'dsfs', name:'Raju Sharma', date:'', desg: 'singer', attendance: '20%'}
+      // ],
+      dialog: false
     }
   },
   methods: {
+
+    openDialog(item) {
+      this.modalItem = item
+      this.dialog = true
+      console.log(this.modalItem)
+    },
     async addEmployee(e) {
       try {
         let data = await this.$axios.$post('admin/employees/add', {
@@ -102,15 +120,33 @@ export default {
           name: e.name,
           desg: e.desg
         })
-        console.log(data)
       } catch(err) {
         console.log(err)
       }
     },
 
-    delEmployee(i){
-      console.log(i)
-      this.items.splice(i, 1)
+    async delEmployee(id){
+      try{
+        let data = await this.$axios.$post('admin/employees/delete', {
+          id: id
+        })
+      } catch(err) {
+        console.log(err)
+      }
+    },
+
+    async editEmployee(e) {
+      try{
+        let data = await this.$axios.$post('admin/employees/edit', {
+          id: e.id,
+          date: e.date,
+          name: e.name,
+          desg: e.desg,
+          attendance: e.desg
+        })
+      } catch(err) {
+        console.log(err)
+      }
     },
 
     formattedDate(d){
@@ -122,19 +158,31 @@ export default {
     try {
       let data = await this.$axios.$get('admin/employees')
       for (let employee of data.employees) {
-        let item = {
+        let temp = {
           id: employee._id,
           name: employee.name,
           date: employee.date,
           desg: employee.desg,
           attendance: employee.attendance
         }
-        this.items.push(item)
+        this.items.push(temp)
       }
     } catch(err) {
       console.log(err)
     }
   },
+
+  computed: {
+    resultQuery() {
+      if(this.search) {
+        return this.items.filter(item => {
+          return this.search.toLowerCase().split(' ').every(v => item.name.toLowerCase().includes(v))
+        })
+      } else {
+        return this.items
+      }
+    }
+  }
 
   
 }
