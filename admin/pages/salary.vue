@@ -17,26 +17,26 @@
           vertical
         ></v-divider>
         <v-spacer></v-spacer>
-        <v-col cols="3" sm="2">
-        <v-menu offset-y >
-          <template v-slot:activator="{ on, attrs }">
-          <v-text-field
-          color="mainpurple"
-          label="Sort by Month" 
-          :value="formattedMonth"
-          v-bind="attrs" 
-          v-on="on"
-          class="mt-5"
-          >
-          </v-text-field>
-          </template>
-          <v-date-picker
-          v-model="monthSort"
-          type="month"
-          color="mainpurple"
-          elevation="0"
-          ></v-date-picker>
-        </v-menu>
+        <v-col cols="3">
+          <v-menu offset-y >
+            <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+            color="mainpurple"
+            label="Sort by Month" 
+            :value="formattedMonth"
+            v-bind="attrs" 
+            v-on="on"
+            class="mt-5"
+            >
+            </v-text-field>
+            </template>
+            <v-date-picker
+            v-model="monthSort"
+            type="month"
+            color="mainpurple"
+            elevation="0"
+            ></v-date-picker>
+          </v-menu>
         </v-col>
         <sal-popup @add-salary="addToSalary"></sal-popup>
         </v-toolbar>
@@ -56,23 +56,8 @@
               </v-text-field>
             </template>
         </v-edit-dialog>
-
       </template>
 
-      <template v-slot:item.employee="props">
-        <v-edit-dialog
-          :return-value.sync="props.item.employee"
-          >
-            {{ props.item.employee }}
-            <template v-slot:input>
-              <v-select
-              :items="employees"
-              label="Edit Employee"
-              v-model="props.item.employee"
-              ></v-select>
-            </template>
-        </v-edit-dialog>
-      </template>
 
       <template v-slot:item.salary="props">
         <v-edit-dialog
@@ -98,7 +83,7 @@
         small
         color="error"
         class="ml-3"
-        @click="deleteSalary(item)"
+        @click="deleteSalary(item._id)"
         >
           mdi-delete
         </v-icon>
@@ -137,6 +122,13 @@ export default {
     },
 
     methods: {
+      async getSalaries(){
+        let data = await this.$axios.$get('admin/salary')
+        for(let salary of data.salaries) {
+          salary.date = salary.date ? moment(salary.date).format('DD MMM YYYY') : ''
+          this.items.push(salary)
+        }
+      },
       async addToSalary(e) {
         try{
           let d = await this.$axios.$post('admin/salary/add', {
@@ -153,24 +145,24 @@ export default {
         this.items.push(e)
       },
 
-      deleteSalary(item) {
-        this.items = this.items.filter(i => i !== item)
+      async deleteSalary(id) {
+        try{
+          await this.$axios.$post('admin/salary/delete', {
+            id: id
+          })
+        } catch(err) {
+          console.log(err)
+        }
       },
     },
     async created() {
-      let data = await this.$axios.$get('admin/salary')
-      for(let salary of data.salaries) {
-        this.items.push(salary)
-      }
+      this.getSalaries()
     },
     computed: {
-      // formattedDate(){
-      //   return this.salDate ? moment(this.salDate).format('DD MMM YYYY') : ''
-      // },
       formattedMonth(){
-        return this.monthSort ? moment(this.monthSort).format('MMM').toString() : ''
+        return this.monthSort ? moment(this.monthSort).format('MMMM').toString() : ''
       }
-    }
+    },
 }
 </script>
 

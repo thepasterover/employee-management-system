@@ -21,7 +21,8 @@ export default {
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
-    '@/plugins/vue-awesome-countdown'
+    '@/plugins/vue-awesome-countdown',
+    '@/plugins/vue-observe-visibility'
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
@@ -71,7 +72,9 @@ export default {
           mainpurple: '#645DF6',
           textheadpurple: '#151542',
           subtextgrey: '#9896B0',
-
+          holiday: '#9896B0',
+          present: colors.green.darken2,
+          absent: colors.deepOrange.accent4,
         }
       }
     }
