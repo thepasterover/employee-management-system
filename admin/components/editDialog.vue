@@ -86,11 +86,15 @@ export default {
     }
   },
 
-  // created() {
-  //   this.joined = this.item.date
-  //   this.name = this.item.name
-  //   this.desg = this.item.desg
-  //   this.attendance = this.item.attendance
+  mounted() {
+    this.joined = this.item.date
+    this.name = this.item.name
+    this.desg = this.item.desg
+    this.attendance = this.item.attendance
+  },
+  
+  // destroyed(){
+  //   this.dialog = false
   // },
 
   computed: {

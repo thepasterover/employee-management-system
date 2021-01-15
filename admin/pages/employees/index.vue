@@ -1,6 +1,6 @@
 <template>
   <div class="mt-3 pa-2">
-    <edit-dialog  :dialog="dialog" :item="modalItem" @edit-employee="editEmployee"></edit-dialog>
+    <!-- <edit-dialog  :dialog="dialog" :item="modalItem" @edit-employee="editEmployee"></edit-dialog> -->
     <v-row justify='end'> 
       <v-col>
         <h2 class="textheadpurple--text"> Employees </h2>
@@ -20,7 +20,7 @@
     <v-row justify="start" align="center">
       <v-col v-for="(item, i) in resultQuery" :key="i" cols=12 md=4 sm=5>
         <v-card  max-width="320">
-          <div class="text-right mt-2 mb-n8">
+          <!-- <div class="text-right mt-2 mb-n8">
             <v-col>
               <v-speed-dial
                 transition="slide-x-transition"
@@ -55,7 +55,7 @@
               
             </v-col>
             
-          </div>
+          </div> -->
           
           <div class="text-center">
             <v-col class="pa-4 pt-8">
@@ -108,11 +108,7 @@ export default {
   },
   methods: {
 
-    openDialog(item) {
-      this.modalItem = item
-      this.dialog = true
-      console.log(this.modalItem)
-    },
+    
     async addEmployee(e) {
       try {
         let data = await this.$axios.$post('admin/employees/add', {
@@ -120,20 +116,13 @@ export default {
           name: e.name,
           desg: e.desg
         })
+        
       } catch(err) {
         console.log(err)
       }
     },
 
-    async delEmployee(id){
-      try{
-        let data = await this.$axios.$post('admin/employees/delete', {
-          id: id
-        })
-      } catch(err) {
-        console.log(err)
-      }
-    },
+    
 
     async editEmployee(e) {
       try{

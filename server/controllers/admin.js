@@ -1,7 +1,10 @@
+const moment = require('moment')
+
 const Employee = require('../models/employee')
 const Salary = require('../models/salary')
 const Attendance = require('../models/attendance')
 const AttendanceDay = require('../models/attendanceDay')
+const { QueryCursor } = require('mongoose')
 
 exports.getEmployees = async(req, res, next) => {
     try{
@@ -21,6 +24,18 @@ exports.addEmployee = async(req, res, next) => {
             name: req.body.name,
             desg: req.body.desg,
         })
+
+        let cm = moment().format('YYYY-MM')
+        let attendance = await Attendance.findOne({year_month: cm})
+    
+        for(let d of attendance.days){
+            let attendancedays = await AttendanceDay.findById(d)
+            attendancedays.employees.push({
+            empId: employee
+            })
+            await attendancedays.save()
+        }
+
         res.json({
             message: 'Employee Added'
         })
@@ -48,6 +63,16 @@ exports.editEmployee = async(req, res, next) => {
 exports.delEmployee = async(req, res, next) => {
     try {
         await Employee.findByIdAndDelete(req.body.id)
+        let attendances =  await Attendance.find()
+        
+        for(let a of attendances){
+            for(let day of a.days) {
+                let attendancedays = await AttendanceDay.findById(day)
+                attendancedays.employees = attendancedays.employees.filter(e => e.empId.toString() != req.body.id.toString())
+                await attendancedays.save()
+            }
+        }
+        
         res.json({
             message: 'Employee deleted'
         })
@@ -114,6 +139,18 @@ exports.getAttendances = async(req, res, next) => {
         // attendance = attendance.days.filter(a => {
         //     a.employees.filter(e => e.empId.toString() == '5fef20f37677200be4a13d1b')
         // })
+        let flag
+        if(attendance){
+            for(let a of attendance.days){
+                if(a.employees.length < 1){
+                    flag = true
+                    break
+                } 
+            }
+        }
+        if(flag){
+            attendance = null
+        }
         res.json(attendance)
     } catch(err) {
         console.log(err)
@@ -122,14 +159,13 @@ exports.getAttendances = async(req, res, next) => {
 
 exports.updateAttendance = async(req, res, next) => {
     try {
-        console.log(req.body.id)
-        let attendanceDay = await AttendanceDay.findOne({'employees._id':req.body.id})
+        let attendancedays = await AttendanceDay.findOne({'employees._id':req.body.id})
             .select({ 'employees': {$elemMatch: {_id: req.body.id}}})
-        console.log(attendanceDay)
-        attendanceDay.employees.forEach((emp) => {
+        
+        attendancedays.employees.forEach((emp) => {
             emp.status = req.body.status
         })
-        await attendanceDay.save()
+        await attendancedays.save()
         res.json({
             message: 'Status Updated'
         })
@@ -145,17 +181,17 @@ exports.createOneTimeAttendances = async(req, res, next) => {
         })
         let employees = await Employee.find().select('_id')
         for(let i=1; i<=31; i++){
-            let attendanceDay = await AttendanceDay.create({
+            let attendancedays = await AttendanceDay.create({
                 day: i,
             })
             for(let emp of employees){
                 let tempObj = {
                     empId: emp,
                 }
-                attendanceDay.employees.push(tempObj)
+                attendancedays.employees.push(tempObj)
             }
-            await attendanceDay.save()
-            attendance.days.push(attendanceDay)
+            await attendancedays.save()
+            attendance.days.push(attendancedays)
             await attendance.save()
         }
         console.log("Hello")
@@ -165,3 +201,25 @@ exports.createOneTimeAttendances = async(req, res, next) => {
         console.log(err)
     }
 }
+
+exports.getDates = async(req, res, next) => {
+    try{
+        let attendances =  await Attendance.find()
+        
+        for(let a of attendances){
+            for(let day of a.days) {
+                let attendancedays = await AttendanceDay.findById(day)
+                attendancedays.employees = attendancedays.employees.filter(e => e.empId.toString() != '600071dbe4924b005c7eb23f'.toString())
+                await attendancedays.save()
+            }
+        }
+        
+        res.json({
+            attendance
+        })
+    } catch(err) {
+        console.log(err)
+    }   
+}
+
+// let days = moment(cm, 'YYYY-MM').daysInMonth()

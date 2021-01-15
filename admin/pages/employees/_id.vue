@@ -1,5 +1,24 @@
 <template>
   <div >
+    <edit-dialog  :dialog="dialog" :item="employeeData" @edit-employee="editEmployee"></edit-dialog>
+    <v-row class="pa-1 pl-3" no-gutters>
+      <v-col>
+        <v-btn icon :to="'/employees'" nuxt color="subtextgrey">
+          <v-icon >mdi-arrow-left</v-icon>
+        </v-btn>
+      </v-col>
+      <v-row no-gutters justify="end" align="end" class="px-1">
+        <v-btn color="primary" class="mr-5" @click="dialog = !dialog">
+          <v-icon small class="pr-2">mdi-pencil</v-icon>
+          Edit
+        </v-btn>
+        <v-btn color="error" @click="delEmployee">
+          <v-icon small class="pr-2">mdi-delete</v-icon>
+          Delete
+        </v-btn>
+      </v-row>
+    </v-row>
+    <v-divider class="mb-2"></v-divider>
     <v-row>
       <v-col>
         <v-card max-width="600">
@@ -134,13 +153,20 @@
             type="month"
             color="mainpurple"
             elevation="0"
+            @change="getAttendance"
+            min="2021-01"
             ></v-date-picker>
           </v-menu>
         </v-col>
       </v-row>
       <v-divider class="mt-4 mx-7"></v-divider>
-      <v-row class="pa-7">
-        <v-col v-for="(day, i) in compDays" :key="day._id">
+      <v-row v-if="!compDays" class="pa-7" justify="center">
+        <v-col>
+          <h3>No Data available</h3>
+        </v-col>
+      </v-row>
+      <v-row class="pa-7" v-else>
+        <v-col v-for="(day, i) in compDays" :key="day._id" >
           <v-sheet
             :height="40"
             :width="40"
@@ -152,22 +178,29 @@
           <span class="white--text" v-else>{{i+1}}</span></v-sheet>
         </v-col>
       </v-row>
+      
     </v-card>
   </div>
 </template>
 
 <script>
 import moment from 'moment'
+import editDialog from '../../components/editDialog'
 
 export default {
+  components: {
+    editDialog
+  },
   data() {
     return {
+      dialog: false,
       employeeData: {},
       value: 0,
       attendance: 40,
       present: null,
       absent: null,
       month: null,
+      currentMonth: null,
       days:  31
     }
   },
@@ -176,6 +209,8 @@ export default {
     try{
       let data = await this.$axios.$get('admin/employees/' + this.$route.params.id)
       this.employeeData = data.employee
+      this.month = moment().format('YYYY-MM')
+      this.currentMonth = this.month
       this.getAttendance()
       
     } catch(err) {
@@ -194,9 +229,23 @@ export default {
   },
 
   methods: {
+    datePickerM(){
+      console.log(this.month)
+    },
+    editEmployee(e){
+      // console.log(e)
+      // this.dialog = false
+    },
     formattedDate(d){
       return d ? moment(d).format('DD MMM YYYY') : ''
     },
+
+    // openDialog(item) {
+    //   this.modalItem = item
+    //   this.dialog = true
+    //   console.log(this.modalItem)
+    // },
+
     async sheetColorManager(day) {
       try{
         day.sheetColor === 'holiday' ? day.sheetColor = 'present' : 
@@ -205,7 +254,7 @@ export default {
           id: day.employees[0]._id,
           status: day.sheetColor
         })
-        console.log(data)
+        
         this.getAttendance()
       } catch(err) {
         console.log(err)
@@ -213,14 +262,32 @@ export default {
     },
 
     async getAttendance(){
-      this.month = moment().format('YYYY-MM')
+      try{
       let data = await this.$axios.$get('admin/attendance/' + this.$route.params.id, {
         params: {
           year_month: this.month
         }
       })
-      this.days = data.days
-    }
+      this.days = data ? data.days : null
+      
+      } catch(err){
+        console.log(err)
+      } 
+    },
+
+    async delEmployee(){
+      try{
+        let data = await this.$axios.$post('admin/employees/delete', {
+          id: this.employeeData._id
+        })
+        console.log('Employee Deleted')
+        this.$router.push('/employees')
+        this.$toast.success('Employee Deleted')
+      } catch(err) {
+        console.log(err)
+      }
+    },
+
   },
 
   computed: {
@@ -228,9 +295,11 @@ export default {
       return this.month ? moment(this.month).format('MMMM').toString() : ''
     },
     compDays() {
-      Array.from(this.days).forEach((v) => {
-        v.sheetColor = v.employees[0].status
-      })
+      if(this.days){
+        Array.from(this.days).forEach((v) => {
+          v.sheetColor = v.employees[0].status
+        })
+      }
       return this.days
     }
     

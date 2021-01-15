@@ -70,8 +70,8 @@ export default {
           lightpurple: '#BABBCD',
           headpurple: '#8CA9C6',
           mainpurple: '#645DF6',
-          textheadpurple: '#151542',
-          subtextgrey: '#9896B0',
+          textheadpurple: '#000000', // 151542
+          subtextgrey: '#8e8e8e',
           holiday: '#9896B0',
           present: colors.green.darken2,
           absent: colors.deepOrange.accent4,

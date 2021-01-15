@@ -2,6 +2,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const cors = require('cors')
+require('dotenv').config()
+
 
 const adminRoutes = require('./routes/admin')
 
@@ -16,7 +18,7 @@ app.use(
 	})
 )
 
-mongoose.connect('mongodb://paste_rover:CedPKeIzqYUfuhqC@cluster0-shard-00-00.m6ew8.mongodb.net:27017,cluster0-shard-00-01.m6ew8.mongodb.net:27017,cluster0-shard-00-02.m6ew8.mongodb.net:27017/employee-system?ssl=true&replicaSet=atlas-i8464a-shard-0&authSource=admin&retryWrites=true&w=majority', {
+mongoose.connect(`mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0-shard-00-00.m6ew8.mongodb.net:27017,cluster0-shard-00-01.m6ew8.mongodb.net:27017,cluster0-shard-00-02.m6ew8.mongodb.net:27017/${process.env.MONGO_DB}?ssl=true&replicaSet=atlas-i8464a-shard-0&authSource=admin&retryWrites=true&w=majority`, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 	useFindAndModify: false,

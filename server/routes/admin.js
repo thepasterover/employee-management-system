@@ -20,8 +20,12 @@ router.post('/salary/delete', adminController.delSalary)
 
 router.post('/attendance/update', adminController.updateAttendance)
 
+router.get('/attendance/temp', adminController.createOneTimeAttendances)
+
 router.get('/attendance/:id', adminController.getAttendances)
 
-// router.get('/attendance/temp', adminController.createOneTimeAttendances)
+
+
+router.get('/test', adminController.getDates)
 
 module.exports = router
