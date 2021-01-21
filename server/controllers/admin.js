@@ -4,7 +4,7 @@ const Employee = require('../models/employee')
 const Salary = require('../models/salary')
 const Attendance = require('../models/attendance')
 const AttendanceDay = require('../models/attendanceDay')
-const { QueryCursor } = require('mongoose')
+const Work = require('../models/work')
 
 exports.getEmployees = async(req, res, next) => {
     try{
@@ -72,6 +72,10 @@ exports.delEmployee = async(req, res, next) => {
                 await attendancedays.save()
             }
         }
+
+        for(let w of employee.works){
+            await Work.findByIdAndDelete(w)
+        }
         
         res.json({
             message: 'Employee deleted'
@@ -95,7 +99,7 @@ exports.getEmployee = async(req, res, next) => {
 
 exports.getSalaries = async(req, res, next) => {
     try {
-        let salaries = await Salary.find().populate('employee', 'name -_id')
+        let salaries = await Salary.find()
         res.json({
             salaries
         })
@@ -106,12 +110,16 @@ exports.getSalaries = async(req, res, next) => {
 
 exports.addSalary = async(req, res, next) => {
     try {
+        let employee = await Employee.findById(req.body.employee).select('-_id name')
         await Salary.create({
             date: req.body.date,
             salary: req.body.salary,
             month: req.body.month,
             type: req.body.type,
-            employee: req.body.employee
+            employee: employee.name
+        })
+        res.json({
+            message: 'Salary Added'
         })
     } catch(err) {
         console.log(err)
@@ -124,6 +132,18 @@ exports.delSalary = async(req, res, next) => {
         res.json({
             message: 'Salary deleted'
         })
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+exports.getSalaryByMonth = async(req, res, next) => {
+    try {
+        let salaries = await Salary.find({employee: req.params.employee ,month: req.params.month})
+        res.json({
+            salaries
+        })
+        
     } catch(err) {
         console.log(err)
     }
@@ -174,6 +194,61 @@ exports.updateAttendance = async(req, res, next) => {
     }
 }
 
+exports.getWorks = async(req, res, next) => {
+    try {
+        let works = await Employee.findById(req.params.id).populate('works').select('name works -_id')
+        res.json({
+            works
+        })
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+exports.addWork = async(req, res, next) => {
+    try {
+        let work = await Work.create({
+            date: req.body.date,
+            quantity: req.body.quantity,
+            price: req.body.price,
+            category: req.body.category,
+            employee: req.body.employee
+        })
+        await Employee.findByIdAndUpdate(
+            req.body.employee, {$push: {works: work}})
+        
+        res.json({
+            message: 'Work Added'
+        })
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+
+exports.delWork = async(req, res, next) => {
+    try {
+        let employee = await Employee.findById(req.body.empId)
+        employee.works = employee.works.filter((w) => w.toString() !== req.body.id.toString())
+        await employee.save()
+
+        await Work.findByIdAndDelete(req.body.id)
+        res.json({
+            message: 'Work deleted'
+        })
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+
+
+
+
+
+
+///////////////////////////////////////////////////
+
 exports.createOneTimeAttendances = async(req, res, next) => {
     try{
         let attendance = await Attendance.create({
@@ -204,18 +279,13 @@ exports.createOneTimeAttendances = async(req, res, next) => {
 
 exports.getDates = async(req, res, next) => {
     try{
-        let attendances =  await Attendance.find()
-        
-        for(let a of attendances){
-            for(let day of a.days) {
-                let attendancedays = await AttendanceDay.findById(day)
-                attendancedays.employees = attendancedays.employees.filter(e => e.empId.toString() != '600071dbe4924b005c7eb23f'.toString())
-                await attendancedays.save()
-            }
+        let employee = await Employee.findById('6009c16f4be2090818142ee3')
+        for(let w of employee.works){
+            await Work.findByIdAndDelete(w)
         }
         
         res.json({
-            attendance
+            employee
         })
     } catch(err) {
         console.log(err)

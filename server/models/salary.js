@@ -7,14 +7,13 @@ const SalarySchema = new Schema({
         required: true
     },
     employee: {
-        type: Schema.Types.ObjectId,
-        ref: 'Employee'
+        type: String,
     },
     salary: {
         type: Number,
     },
     month: {
-        type: String,
+        type: Date,
     },
     type: {
         type: String

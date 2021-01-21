@@ -18,13 +18,20 @@ router.post('/salary/add', adminController.addSalary)
 
 router.post('/salary/delete', adminController.delSalary)
 
+router.get('/salary/:employee/:month', adminController.getSalaryByMonth)
+
 router.post('/attendance/update', adminController.updateAttendance)
 
-router.get('/attendance/temp', adminController.createOneTimeAttendances)
+// router.get('/attendance/temp', adminController.createOneTimeAttendances)
 
 router.get('/attendance/:id', adminController.getAttendances)
 
 
+router.post('/work/add', adminController.addWork)
+
+router.post('/work/delete', adminController.delWork)
+
+router.get('/work/:id', adminController.getWorks)
 
 router.get('/test', adminController.getDates)
 

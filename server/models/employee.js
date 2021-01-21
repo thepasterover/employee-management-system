@@ -13,10 +13,12 @@ const employeeSchema = new Schema({
     desg: {
         type: String
     },
-    attendance: {
-        type: String,
-        default: '10%'
-    }
+    works: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Work'
+        }
+    ]
 })
 
 module.exports = mongoose.model('Employee', employeeSchema)

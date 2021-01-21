@@ -2,7 +2,7 @@
   <v-dialog max-width="600px" v-model="dialog">
     <template v-slot:activator="{ on, attrs }">
       <v-btn color="mainpurple" class="white--text text-capitalize" v-bind="attrs"
-            v-on="on" @click="dialog = true">
+            v-on="on" @click="dialog = true" elevation=0>
         <v-icon  class="pr-2 ml-n2">
           mdi-plus-box
         </v-icon>
@@ -106,7 +106,7 @@ export default {
           date: this.salDate,
           employee: this.emp_id,
           salary: this.salary,
-          month: this.formattedMonth,
+          month: this.month,
           type: this.selectedType
         }
         this.$emit('add-salary', this.item)

@@ -3,7 +3,7 @@
     <v-data-table
     :headers=headers
     :items=items
-    :search="formattedMonth"
+    :search="formattedMonthSort"
     >
       <template v-slot:top>
         <v-toolbar
@@ -23,7 +23,7 @@
             <v-text-field
             color="mainpurple"
             label="Sort by Month" 
-            :value="formattedMonth"
+            :value="formattedMonthSort"
             v-bind="attrs" 
             v-on="on"
             class="mt-5"
@@ -109,7 +109,7 @@ export default {
         ],
         headers: [
           {text: 'Date', value: 'date', class: 'textheadpurple--text'},
-          {text: 'Employee Name', value: 'employee.name', class: 'textheadpurple--text'},
+          {text: 'Employee Name', value: 'employee', class: 'textheadpurple--text'},
           {text: 'Salary', value: 'salary', class: 'textheadpurple--text'},
           {text: 'Month', value: 'month', class: 'textheadpurple--text'},
           {text: 'Type', value: 'type', class: 'textheadpurple--text'},
@@ -123,9 +123,12 @@ export default {
 
     methods: {
       async getSalaries(){
+        this.items = []
         let data = await this.$axios.$get('admin/salary')
+        
         for(let salary of data.salaries) {
           salary.date = salary.date ? moment(salary.date).format('DD MMM YYYY') : ''
+          salary.month = salary.month ? moment(salary.month).format('MMMM') : ''
           this.items.push(salary)
         }
       },
@@ -138,11 +141,11 @@ export default {
             type: e.type,
             employee: e.employee
           })
-          console.log(d)
+          this.getSalaries()
         } catch(err) {
           console.log(err)
         }
-        this.items.push(e)
+        // this.items.push(e)
       },
 
       async deleteSalary(id) {
@@ -150,6 +153,7 @@ export default {
           await this.$axios.$post('admin/salary/delete', {
             id: id
           })
+          this.getSalaries()
         } catch(err) {
           console.log(err)
         }
@@ -159,9 +163,9 @@ export default {
       this.getSalaries()
     },
     computed: {
-      formattedMonth(){
+      formattedMonthSort(){
         return this.monthSort ? moment(this.monthSort).format('MMMM').toString() : ''
-      }
+      },
     },
 }
 </script>
