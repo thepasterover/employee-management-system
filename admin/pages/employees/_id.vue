@@ -8,12 +8,12 @@
         </v-btn>
       </v-col>
       <v-row no-gutters justify="end" align="end" class="px-1">
-        <v-btn color="primary" class="mr-5" @click="dialog = !dialog">
+        <v-btn color="mainpurple" class="mr-5 white--text text-capitalize" @click="dialog = !dialog" depressed >
           <v-icon small class="pr-2">mdi-pencil</v-icon>
           Edit
         </v-btn>
-        <v-btn color="error" @click="delEmployee">
-          <v-icon small class="pr-2">mdi-delete</v-icon>
+        <v-btn color="error" @click="delEmployee" depressed>
+          <v-icon small class="pr-2 text-capitalize">mdi-delete</v-icon>
           Delete
         </v-btn>
       </v-row>
@@ -42,7 +42,7 @@
                     <h4 class="subtextgrey--text subtitle-1 text-capitalize">Name: </h4> 
                   </v-col>
                   <v-col cols="6">
-                    <h4 class="textheadpurple--text">{{employeeData.name}}</h4>
+                    <h4 class="textheadpurple--text text-capitalize">{{employeeData.name}}</h4>
                   </v-col>
               </v-row>
               <v-row class="mt-n5">
@@ -68,7 +68,7 @@
       <v-col>
         <v-card max-width="600" elevation="0">
           <v-row class="pa-5" >
-            <h4 class="textheadpurple--text">Work Chart for {{formattedMonth}}</h4>
+            <h4 class="textheadpurple--text">Work Info</h4>
           </v-row>
           <v-row>
             <v-col class="mx-4 mt-n6">

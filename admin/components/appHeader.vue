@@ -4,9 +4,18 @@
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <h3 class="pl-2" >Abarna Sports wear</h3>
       <v-spacer></v-spacer>
-      <v-avatar color="#645DF6" size="35">
+      <div v-if="$auth.loggedIn">
+        <v-btn @click="$auth.logout()" 
+        depressed
+        color="error"
+        >Logout</v-btn>
+      </div>
+      <!-- <div v-else>
+        
+      </div> -->
+      <!-- <v-avatar color="#645DF6" size="35">
         <span class="white--text">VJ</span>
-      </v-avatar>
+      </v-avatar> -->
     </v-toolbar>
 
     <v-navigation-drawer v-model="drawer" color="white" app temporary>

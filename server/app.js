@@ -4,8 +4,10 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 require('dotenv').config()
 
-
+const authRoutes = require('./routes/auth')
 const adminRoutes = require('./routes/admin')
+
+const isAdmin = require('./middlewares/admin')
 
 const app = express()
 app.use(cors())
@@ -25,6 +27,22 @@ mongoose.connect(`mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@
 })
 mongoose.set('useCreateIndex', true)
 
-app.use('/admin', adminRoutes)
+app.use('/auth', authRoutes)
+app.use('/admin', isAdmin, adminRoutes)
+
+app.use((req, res, next) => {
+	var error = new Error('Route not found')
+	error.status = 404
+	next(error)
+})
+
+app.use((error, req, res, next) => {
+	res.status(error.status || 500)
+	console.log(error)
+	res.json({
+		error: error.message,
+	})
+})
+
 
 app.listen(5000)

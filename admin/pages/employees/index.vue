@@ -94,6 +94,7 @@ import editDialog from '../../components/editDialog'
 import popup from '../../components/popup.vue'
 import moment from 'moment'
 export default {
+  middleware: 'auth',
   components: { popup, editDialog },
   data() {
     return {

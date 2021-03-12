@@ -33,6 +33,7 @@ export default {
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
     '@nuxtjs/toast',
+    '@nuxtjs/auth-next'
   ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
@@ -40,11 +41,33 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     '@nuxtjs/toast',
+    '@nuxtjs/auth-next'
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
     baseURL: 'http://localhost:5000/'
+  },
+
+  auth: {
+    strategies: {
+      local: {
+        token: {
+          property: 'token',
+          // required: true,
+          // type: 'Bearer'
+        },
+        user: {
+          property: 'user',
+          // autoFetch: true
+        },
+        endpoints: {
+          login: { url: '/auth/admin', method: 'post'},
+          logout: false,
+          user: { url: '/auth/admin/me', method: 'get' }
+        }
+      }
+    }
   },
 
   toast: {
