@@ -2,6 +2,7 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
   // Global page headers (https://go.nuxtjs.dev/config-head)
+  
   head: {
     titleTemplate: '%s - employee',
     title: 'employee',
@@ -22,7 +23,8 @@ export default {
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
     '@/plugins/vue-awesome-countdown',
-    '@/plugins/vue-observe-visibility'
+    '@/plugins/vue-observe-visibility',
+    '@/plugins/vue-apexchart'
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
@@ -33,7 +35,8 @@ export default {
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
     '@nuxtjs/toast',
-    '@nuxtjs/auth-next'
+    '@nuxtjs/auth-next',
+    '@nuxtjs/moment',
   ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
@@ -41,7 +44,8 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     '@nuxtjs/toast',
-    '@nuxtjs/auth-next'
+    '@nuxtjs/auth-next',
+    '@nuxtjs/moment',
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)

@@ -13,13 +13,16 @@ router.post('/employees/edit', adminController.editEmployee)
 
 router.post('/employees/delete', adminController.delEmployee)
 
+// Salary Routes
+
 router.get('/salary', adminController.getSalaries)
 
 router.post('/salary/add', adminController.addSalary)
 
 router.post('/salary/delete', adminController.delSalary)
 
-router.get('/salary/:employee/:month', adminController.getSalaryByMonth)
+
+// Attendance Routes
 
 router.post('/attendance/update', adminController.updateAttendance)
 
@@ -27,13 +30,15 @@ router.post('/attendance/update', adminController.updateAttendance)
 
 router.get('/attendance/:id', adminController.getAttendances)
 
+// Work Routes
+router.get('/work', adminController.getAllWorks)
 
 router.post('/work/add', adminController.addWork)
 
 router.post('/work/delete', adminController.delWork)
 
-router.get('/work/:id', adminController.getWorks)
+router.get('/work/:id', adminController.getWorksById)
 
-router.get('/test', adminController.getDates)
+// router.get('/test', adminController.getDates)
 
 module.exports = router

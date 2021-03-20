@@ -125,10 +125,11 @@ export default {
       async getSalaries(){
         this.items = []
         let data = await this.$axios.$get('admin/salary')
-        
+        console.log(data)
         for(let salary of data.salaries) {
           salary.date = salary.date ? moment(salary.date).format('DD MMM YYYY') : ''
           salary.month = salary.month ? moment(salary.month).format('MMMM') : ''
+          salary.employee = salary.employee_name
           this.items.push(salary)
         }
       },

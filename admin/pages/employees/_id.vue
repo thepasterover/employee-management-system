@@ -1,7 +1,7 @@
 <template>
   <div >
     <edit-dialog  :dialog="dialog" :item="employeeData" @edit-employee="editEmployee"></edit-dialog>
-    <v-row class="pa-1 pl-3" no-gutters>
+    <v-row class="pa-1 mt-3 pl-3" no-gutters>
       <v-col>
         <v-btn icon :to="'/employees'" nuxt color="subtextgrey">
           <v-icon >mdi-arrow-left</v-icon>
@@ -18,17 +18,21 @@
         </v-btn>
       </v-row>
     </v-row>
-    <v-divider class="mb-2"></v-divider>
-    <v-row>
-      <v-col>
+    <v-divider class="my-2"></v-divider>
+    <v-row >
+      <v-col cols="12" md="6" offset-sm="1" offset-md="0">
         <v-card max-width="600" elevation="0">
-          <v-row class="pa-7 pb-10" justify="center" align="center" align-content="center">
-            <v-col class="pl-6 pt-5" cols="12" lg="4" align-self="center">
+          <v-row class="pa-4" >
+            <h3 class="textheadpurple--text">Employee Info</h3>
+          </v-row>
+          <v-divider></v-divider>
+          <v-row class="pa-7 pb-10 mt-n3" justify="center" align="center" align-content="center">
+            <v-col class="pl-6 pt-5" cols="12" lg="4" align-self="center" offset="5" offset-sm="7" offset-md="0" >
               <v-avatar color="mainpurple" size="110">
                 <span class="white--text"> VJ </span>
               </v-avatar>
             </v-col>
-            <v-col class="mb-n8">
+            <v-col class="mb-n7" offset="1" offset-sm=2 offset-md="0">
               <v-row class="mt-n3">
                   <v-col cols="5">
                     <h4 class="subtextgrey--text subtitle-1 text-capitalize">Joined Date: </h4> 
@@ -47,10 +51,10 @@
               </v-row>
               <v-row class="mt-n5">
                   <v-col cols="5">
-                    <h4 class="subtextgrey--text subtitle-1 text-capitalize">Attendance: </h4> 
+                    <h4 class="subtextgrey--text subtitle-1 text-capitalize">Email: </h4> 
                   </v-col>
                   <v-col cols="6">
-                    <h4 class="textheadpurple--text">{{employeeData.attendance}}</h4>
+                    <h4 class="textheadpurple--text ">{{employeeData.email}}</h4>
                   </v-col>
               </v-row>
               <v-row class="mt-n5">
@@ -61,74 +65,54 @@
                     <h4 class="textheadpurple--text text-capitalize">{{employeeData.desg}}</h4>
                   </v-col>
               </v-row>
+              <v-row class="mt-n5">
+                  <v-col cols="5">
+                    <h4 class="subtextgrey--text subtitle-1 text-capitalize">Status: </h4> 
+                  </v-col>
+                  <v-col cols="6">
+                    <h4 class="textheadpurple--text text-capitalize">{{employeeData.status}}</h4>
+                  </v-col>
+              </v-row>
             </v-col>
           </v-row>
         </v-card>
       </v-col>
-      <v-col>
+      <v-col offset-sm="1" offset-md="0">
         <v-card max-width="600" elevation="0">
-          <v-row class="pa-5" >
-            <h4 class="textheadpurple--text">Work Info</h4>
+          <v-row class="pa-4" >
+            <h3 class="textheadpurple--text">Work Info</h3>
           </v-row>
-          <v-row>
-            <v-col class="mx-4 mt-n6">
-              <v-divider></v-divider>
-            </v-col>
-          </v-row>
-          <v-row justify="center" align="center" align-content="center">
-            <v-col>
+          <v-divider></v-divider>
+          <v-row justify="center" align="center" align-content="center" class="mt-5 ml-1">
+            <v-col offset-sm="1">
               <div  class="caption"> Work Done </div>
-              <h2> {{getTotalWorkDone}} </h2>
+              <h1> {{getTotalWorkDone}} </h1>
             </v-col>
             <v-col>
               <div  class="caption"> Salary Received </div>
-              <h2> {{salary}} </h2>
+              <h1> {{salary}} </h1>
             </v-col>
             </v-row>
-              <v-row>
-            <v-col>
-              <div  class="caption"> Advance Received </div>
-              <h2> {{advance}} </h2>
-            </v-col>
-            <v-col>
-              <div  class="caption"> Outstanding (If any) </div>
-              <h2> {{getOustanding}} </h2>
-            </v-col>
+            <v-row class="ml-1">
+              <v-col offset-sm="1">
+                <div  class="caption "> Advance Received </div>
+                <h1> {{advance}} </h1>
+              </v-col>
+              <v-col>
+                <div  class="caption"> Outstanding (If any) </div>
+                <h1> {{getOustanding}} </h1>
+              </v-col>
           </v-row >
-          <!-- <v-row justify="center" align="center" align-content="center">
-            <v-col class="mx-12 mb-3 mt-n3">
-              <v-progress-circular
-                :width="12"
-                :size="120"
-                :rotate="-90"
-                :value="value"
-                color="present error"
-              >
-              <span class="textheadpurple--text">{{value}}%</span></v-progress-circular>
-            </v-col>
-            <v-col class="mb-4">
-              <v-row>
-                <v-avatar color="present" size="18" class="mb-n1">
-                </v-avatar>
-                <h4 class="subtitle-2 px-5 mt-n1">Present </h4>
-              </v-row>
-              <v-row class="mt-4">
-                <v-avatar color="subtextgrey" size="18" class="mb-n1">
-                </v-avatar>
-                <h4 class="subtitle-2 px-5 mt-n1">Absent </h4>
-              </v-row>
-            </v-col>
-          </v-row> -->
         </v-card>
       </v-col>
     </v-row>
     <v-card elevation="0">
       <v-row class="pa-7 mb-n12 mt-n0">
-        <v-col cols=3 sm=12 lg=4 xs=12>
+        <v-col cols=12  md=3>
           <h3 class="textheadpurple--text"> Attendance for Month of {{formattedMonth}}</h3>
         </v-col>
         <v-spacer></v-spacer>
-        <v-col class="pt-6">
+        <v-col class="pt-6" cols=8 sm=2 md=2>
           <v-row>
           <v-sheet
           :height="20"
@@ -137,7 +121,7 @@
           <span class="pl-4 subtitle-2">Undefined</span> 
           </v-row>
         </v-col>
-        <v-col class="pt-6">
+        <v-col class="pt-6" sm=2 md=2>
           <v-row>
           <v-sheet
           :height="20"
@@ -146,7 +130,7 @@
           <span class="pl-4 subtitle-2">Present</span> 
           </v-row>
         </v-col>
-        <v-col class="pt-6">
+        <v-col class="pt-6" sm=2 md=2>
           <v-row>
           <v-sheet
           :height="20"
@@ -156,7 +140,7 @@
           </v-row>
         </v-col>
         
-        <v-col class="mb-n4 mt-n2" cols="3">
+        <v-col class="mb-n4 mt-n2" md=3>
           <v-menu offset-y >
             <template v-slot:activator="{ on, attrs }">
             <v-text-field
@@ -185,7 +169,7 @@
           <h3>No Data available</h3>
         </v-col>
       </v-row>
-      <v-row class="pa-7" v-else>
+      <v-row class="pa-1 mx-1" v-else>
         <v-col v-for="(day, i) in compDays" :key="day._id" >
           <v-sheet
             :height="40"
@@ -247,7 +231,6 @@ export default {
       dialog: false,
       employeeData: {},
       value: 0,
-      attendance: 40,
       present: null,
       absent: null,
       month: null,
@@ -283,26 +266,14 @@ export default {
       this.month = moment().format('YYYY-MM')
       this.currentMonth = this.month
       
-      
       this.getAttendance()
       this.getWorks()
       this.getSalaryAndAdvance()
       
       
-      
     } catch(err) {
       console.log(err)
     }
-  },
-
-  mounted() {
-    // setInterval(() => {
-    //   if(this.value < this.attendance){
-    //     this.value += 10
-    //   }
-    // }, 150)
-    
-    
   },
 
   methods: {
@@ -312,11 +283,6 @@ export default {
       return d ? moment(d).format('DD MMM YYYY') : ''
     },
 
-    // openDialog(item) {
-    //   this.modalItem = item
-    //   this.dialog = true
-    //   console.log(this.modalItem)
-    // },
 
     async sheetColorManager(day) {
       try{
@@ -348,17 +314,37 @@ export default {
     },
 
     async getSalaryAndAdvance(){
+      try{
       this.salary = 0
       this.advance = 0
-      let data = await this.$axios.$get('admin/salary/' + this.employeeData.name + '/' + this.month)
-      if(data.salaries.length >=  1){
-        data.salaries.forEach((s) => {
-          if(s.type==='Salary'){
+      let salaries = this.employeeData.salaries.filter(s => moment(s.month).format('YYYY-MM') === this.month)
+      if(salaries.length >= 1){
+        salaries.forEach((s) => {
+          if(s.type === 'Salary'){
             this.salary += s.salary
           } else {
             this.advance += s.salary
           }
         })
+      }
+    } catch(err){
+      console.log(err)
+    }
+    },
+
+    async editEmployee(data){
+      try{
+        await this.$axios.$post('admin/employees/edit', {
+          id: data.id,
+          name: data.name,
+          date: data.date,
+          desg: data.desg,
+          email: data.email,
+          status: data.status
+        })
+
+      } catch(err) {
+        console.log(err)
       }
     },
 
@@ -376,8 +362,12 @@ export default {
     },
 
     monthChange(){
-      this.getAttendance()
-      this.getSalaryAndAdvance()
+      try{
+        this.getAttendance()
+        this.getSalaryAndAdvance()
+      } catch(err) {
+        console.log(err)
+      }
     },
 
     async addToWork(w) {
@@ -387,7 +377,7 @@ export default {
           quantity: w.quantity,
           price: w.price,
           category: w.category,
-          employee: this.employeeData._id
+          employee: this.employeeData
         })
         
       } catch(err) {
@@ -398,10 +388,8 @@ export default {
     async getWorks(){
       try {
         let data = await this.$axios.$get('admin/work/' + this.employeeData._id)
-        
-        if(data.works.works.length >= 1){
-          data.works.works.forEach((w) => {
-            w.name = data.works.name
+        if(data.works.length >=1) {
+          data.works.forEach((w) => {
             w.date = w.date ? moment(w.date).format('DD MMM YYYY') : w.date
             this.works.push(w)
           })
@@ -416,7 +404,6 @@ export default {
       try{
         let data = await this.$axios.$post('admin/work/delete', {
           id: item._id,
-          empId: this.employeeData._id
         })
         
         this.getWorks()

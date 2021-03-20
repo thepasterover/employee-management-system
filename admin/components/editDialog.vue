@@ -17,18 +17,24 @@
              <v-text-field
                 color="mainpurple"
                 label="Name" 
-                v-model="name"
+                v-model="item.name"
               ></v-text-field>
               <v-text-field
               color="mainpurple"
               label="Designation" 
-              v-model="designation"
+              v-model="item.desg"
               >
               </v-text-field>
               <v-text-field
               color="mainpurple"
-              label="Attendance" 
-              v-model="attendance"
+              label="Email" 
+              v-model="item.email"
+              >
+              </v-text-field>
+              <v-text-field
+              color="mainpurple"
+              label="Status" 
+              v-model="item.status"
               >
               </v-text-field>
               <v-row justify="end">
@@ -48,11 +54,7 @@ export default {
 
   data() {
     return {
-      temp: null,
       joined: null,
-      name: null,
-      designation: null,
-      attendance: null,
       nameRules: [
         v => !!v || 'Name is required',
         v => v.length >= 4 || 'Name must be more than 4 characters'
@@ -67,39 +69,25 @@ export default {
   methods: {
     submit() {
       if(this.$refs.form.validate()){
-        this.temp = {
-          id: this.item.id,
-          date: this.joined,
-          name: this.name,
-          desg: this.designation,
-          attendance: this.attendance
+        let temp = {
+          id: this.item._id,
+          date: this.joined  ? this.joined : this.item.date,
+          name: this.item.name,
+          email: this.item.email,
+          status: this.item.status,
+          desg: this.item.desg
         }
         
-        this.$emit('edit-employee', this.temp)
-        this.temp = null
+        this.$emit('edit-employee', temp)
+        temp = null
         this.dialog = false
-        this.joined = null
-        this.name =  null
-        this.desg = null
-        this.attendance = null
+        // this.joined = null
       }
     }
   },
-
-  mounted() {
-    this.joined = this.item.date
-    this.name = this.item.name
-    this.desg = this.item.desg
-    this.attendance = this.item.attendance
-  },
-  
-  // destroyed(){
-  //   this.dialog = false
-  // },
-
   computed: {
     formattedDate(){
-        return this.joined ? moment(this.joined).format('DD MMM YYYY') : ''
+        return this.joined ? moment(this.joined).format('DD MMM YYYY') : moment(this.item.date).format('DD MMM YYYY')
     }
   }
 }

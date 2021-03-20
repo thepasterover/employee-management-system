@@ -10,13 +10,22 @@ const employeeSchema = new Schema({
         type: String,
         required: true
     },
+    email:{
+        type: String
+    },
+    password:{
+        type: String
+    },
     desg: {
         type: String
     },
-    works: [
+    status:{
+        type: String
+    },
+    salaries: [
         {
             type: Schema.Types.ObjectId,
-            ref: 'Work'
+            ref: 'Salary'
         }
     ]
 })

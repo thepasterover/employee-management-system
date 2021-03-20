@@ -23,6 +23,7 @@ exports.addEmployee = async(req, res, next) => {
             date: req.body.date,
             name: req.body.name,
             desg: req.body.desg,
+            email: (req.body.name).toLowerCase().replace(" ", "")
         })
 
         let cm = moment().format('YYYY-MM')
@@ -50,7 +51,8 @@ exports.editEmployee = async(req, res, next) => {
             date: req.body.date,
             name: req.body.name,
             desg: req.body.desg,
-            attendance: req.body.attendance
+            email: req.body.email,
+            status: req.body.status
         })
         res.json({
             message: 'Employee Edited'
@@ -73,9 +75,9 @@ exports.delEmployee = async(req, res, next) => {
             }
         }
 
-        for(let w of employee.works){
-            await Work.findByIdAndDelete(w)
-        }
+        // for(let w of employee.works){
+        //     await Work.findByIdAndDelete(w)
+        // }
         
         res.json({
             message: 'Employee deleted'
@@ -87,7 +89,7 @@ exports.delEmployee = async(req, res, next) => {
 
 exports.getEmployee = async(req, res, next) => {
     try {
-        employee = await Employee.findById(req.params.id)
+        employee = await Employee.findById(req.params.id).populate('salaries')
         res.json({
             employee
         })
@@ -110,14 +112,18 @@ exports.getSalaries = async(req, res, next) => {
 
 exports.addSalary = async(req, res, next) => {
     try {
-        let employee = await Employee.findById(req.body.employee).select('-_id name')
-        await Salary.create({
+        const employee = await Employee.findById(req.body.employee)
+        const salary = await Salary.create({
             date: req.body.date,
             salary: req.body.salary,
             month: req.body.month,
             type: req.body.type,
-            employee: employee.name
+            employee: employee,
+            employee_name: employee.name
         })
+        employee.salaries.push(salary)
+        await employee.save()
+
         res.json({
             message: 'Salary Added'
         })
@@ -129,6 +135,7 @@ exports.addSalary = async(req, res, next) => {
 exports.delSalary = async(req, res, next) => {
     try {
         await Salary.findByIdAndDelete(req.body.id)
+        await Employee.findOneAndUpdate({salaries: {$in: [req.body.id]}}, {$pull: { salaries :{ $in : req.body.id}}})
         res.json({
             message: 'Salary deleted'
         })
@@ -137,17 +144,6 @@ exports.delSalary = async(req, res, next) => {
     }
 }
 
-exports.getSalaryByMonth = async(req, res, next) => {
-    try {
-        let salaries = await Salary.find({employee: req.params.employee ,month: req.params.month})
-        res.json({
-            salaries
-        })
-        
-    } catch(err) {
-        console.log(err)
-    }
-}
 
 exports.getAttendances = async(req, res, next) => {
     try {
@@ -194,9 +190,20 @@ exports.updateAttendance = async(req, res, next) => {
     }
 }
 
-exports.getWorks = async(req, res, next) => {
+exports.getAllWorks = async(req, res, next) => {
     try {
-        let works = await Employee.findById(req.params.id).populate('works').select('name works -_id')
+        let works = await Work.find()
+        res.json({
+            works
+        })
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+exports.getWorksById = async(req, res, next) => {
+    try {
+        let works = await Work.find({employee: req.params.id}) //Employee.findById(req.params.id).populate('works').select('name works -_id')
         res.json({
             works
         })
@@ -212,10 +219,11 @@ exports.addWork = async(req, res, next) => {
             quantity: req.body.quantity,
             price: req.body.price,
             category: req.body.category,
-            employee: req.body.employee
+            employee: req.body.employee,
         })
-        await Employee.findByIdAndUpdate(
-            req.body.employee, {$push: {works: work}})
+        // await Employee.findByIdAndUpdate(
+        //     req.body.employee, {$push: {works: work}}
+        // )
         
         res.json({
             message: 'Work Added'
@@ -228,11 +236,9 @@ exports.addWork = async(req, res, next) => {
 
 exports.delWork = async(req, res, next) => {
     try {
-        let employee = await Employee.findById(req.body.empId)
-        employee.works = employee.works.filter((w) => w.toString() !== req.body.id.toString())
-        await employee.save()
 
         await Work.findByIdAndDelete(req.body.id)
+        
         res.json({
             message: 'Work deleted'
         })
@@ -252,7 +258,7 @@ exports.delWork = async(req, res, next) => {
 exports.createOneTimeAttendances = async(req, res, next) => {
     try{
         let attendance = await Attendance.create({
-            year_month: '2021-01'
+            year_month: '2021-03'
         })
         let employees = await Employee.find().select('_id')
         for(let i=1; i<=31; i++){
@@ -270,7 +276,7 @@ exports.createOneTimeAttendances = async(req, res, next) => {
             await attendance.save()
         }
         console.log("Hello")
-        res.json(employees)
+        res.json(attendance)
         
     } catch(err) {
         console.log(err)

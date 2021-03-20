@@ -7,7 +7,11 @@ const SalarySchema = new Schema({
         required: true
     },
     employee: {
-        type: String,
+        type: Schema.Types.ObjectId,
+        ref: 'Employee'
+    },
+    employee_name: {
+        type: String
     },
     salary: {
         type: Number,

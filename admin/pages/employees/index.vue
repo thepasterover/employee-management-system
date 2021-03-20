@@ -1,6 +1,6 @@
 <template>
   <div class="mt-3 pa-2">
-    <!-- <edit-dialog  :dialog="dialog" :item="modalItem" @edit-employee="editEmployee"></edit-dialog> -->
+    <!-- <edit-dialog  :dialog="dialog" @click="!dialog" :item="modalItem" @edit-employee="editEmployee"></edit-dialog> -->
     <v-row justify='end'> 
       <v-col>
         <h2 class="textheadpurple--text"> Employees </h2>
@@ -70,13 +70,13 @@
               </NuxtLink>
               <h4 class="subtextgrey--text mt-1">{{formattedDate(item.date)}}</h4>
               <v-row class="mt-0" justify="center" align="center">
-                <v-col align-self="center" class="mr-n5">
+                <!-- <v-col align-self="center" class="mr-n5">
                   <v-icon color="subtextgrey" size="18">mdi-calendar-outline</v-icon>
-                </v-col>
-                <v-col align-self="center" class="mr-n3"><v-progress-linear value=100 color="#2B51D6" rounded></v-progress-linear></v-col>
+                </v-col> -->
+                <!-- <v-col align-self="center" class="mr-n3"><v-progress-linear value=100 color="#2B51D6" rounded></v-progress-linear></v-col>
                 <v-col align-self="center" class="mr-n3"><v-progress-linear value=100 color="#577BF9" rounded></v-progress-linear></v-col>
-                <v-col align-self="center"><v-progress-linear value=55 color="#54B5FF" rounded></v-progress-linear></v-col>
-                <v-col class="subtextgrey--text mt-3 ml-n5"><p >{{item.attendance}}</p></v-col>
+                <v-col align-self="center"><v-progress-linear value=55 color="#54B5FF" rounded></v-progress-linear></v-col> -->
+                <!-- <v-col class="subtextgrey--text mt-3 ml-n5"><p >{{item.attendance}}</p></v-col> -->
                 
               </v-row>
               <h3 class="mt-4 mb-2 subtextgrey--text text-uppercase">{{item.desg}}</h3>
