@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const adminController = require('../controllers/admin')
 const auth = require('../middlewares/admin')
+const admin = require('../models/admin')
 
 router.get('/employees', adminController.getEmployees)
 
@@ -40,6 +41,13 @@ router.post('/work/add', adminController.addWork)
 router.post('/work/delete', adminController.delWork)
 
 router.get('/work/:id', adminController.getWorksById)
+
+// Category Routes
+
+router.post('/category/add', adminController.addCategory)
+
+router.post('/category/delete', adminController.delCategory)
+
 
 // router.get('/test', adminController.getDates)
 

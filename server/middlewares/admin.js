@@ -5,7 +5,6 @@ const CustomError = require('../error')
 
 module.exports = async (req, res, next) => {
     try{
-
         let token = req.headers.authorization.split(' ')[1]
         let decodedtoken = await jwt.verify(token, process.env.JWT_SECRET)
         let user = await Admin.findById(decodedtoken.data)

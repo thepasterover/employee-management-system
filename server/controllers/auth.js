@@ -9,7 +9,6 @@ exports.adminLogin = async(req, res, next) => {
         let password = req.body.password
         
         let user = await Admin.findOne({email: email})
-        // console.log(user)
         // let match = await bcrypt.compare(password, user.password)
         let token
         //if(match){
@@ -24,11 +23,12 @@ exports.adminLogin = async(req, res, next) => {
 }
 
 
-exports.adminMe = (req, res, next) => {
-    res.json({
-        user: {
-            name: 'wow'
-        }
-    })
+exports.adminMe = async(req, res, next) => {
+    try{
+        let user = await Admin.findById(req.id)
+        res.json({user: user})
+    } catch(err){
+        console.log(err)
+    }
 }
 

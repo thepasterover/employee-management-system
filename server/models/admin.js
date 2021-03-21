@@ -7,7 +7,8 @@ const AdminSchema = new Schema({
     },
     password: {
         type: String
-    }
+    },
+    categories: [String]
 })
 
 module.exports = mongoose.model('Admin', AdminSchema)

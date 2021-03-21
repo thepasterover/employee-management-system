@@ -5,6 +5,7 @@ const Salary = require('../models/salary')
 const Attendance = require('../models/attendance')
 const AttendanceDay = require('../models/attendanceDay')
 const Work = require('../models/work')
+const Admin = require('../models/admin')
 
 exports.getEmployees = async(req, res, next) => {
     try{
@@ -263,6 +264,31 @@ exports.delWork = async(req, res, next) => {
     }
 }
 
+exports.addCategory = async(req, res, next) => {
+    try {
+        await Admin.findByIdAndUpdate(req.id, {
+            $push: {categories: req.body.category}
+        })
+        res.json({
+            message: "Category Added"
+        })
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+exports.delCategory = async (req, res, next) => {
+    try {
+        await Admin.findByIdAndUpdate(req.id, {
+            $pull: {categories: req.body.category}
+        })
+        res.json({
+            message: "Category Deleted"
+        })
+    } catch(err) {
+        console.log(err)
+    }
+}
 
 
 

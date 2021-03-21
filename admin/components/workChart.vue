@@ -1,12 +1,8 @@
 <template>
     <div class="mt-6">
-      <v-row>
-        <v-col cols=12 md=8>
-          <h2>Work Chart</h2>
-          <v-divider></v-divider>
-          <apexchart type="area" :options="chartOptions" :series="series" :height=400 class="mt-5"></apexchart>
-        </v-col>
-      </v-row>
+        <h2>Work Chart</h2>
+        <v-divider></v-divider>
+        <apexchart type="area" :options="chartOptions" :series="series" :height=400 class="mt-5"></apexchart>
     </div>
 </template>
 
@@ -48,7 +44,6 @@ export default {
   async created() {
     try {
       let data = await this.$axios.$get('admin/work/day')
-      console.log(data)
       let tshirtlist = []
       let shortslist = []
       data.forEach(d => {

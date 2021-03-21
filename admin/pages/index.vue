@@ -3,18 +3,28 @@
     <h1>Welcome, Admin</h1>
     <v-divider></v-divider>
     <dash-board-cards/>
+    <v-row>
+      <v-col cols=12 md=8>
+        <work-chart />
+      </v-col>
+      <v-col>
+        <categories />
+      </v-col>  
+    </v-row>
     
-    <work-chart />
   </div>
 </template>
 
 <script>
 import dashBoardCards from '../components/dashBoardCards.vue'
 import workChart from '../components/workChart.vue'
+import categories from '../components/categories'
 export default {
+  middleware: 'auth',
   components: {
     dashBoardCards,
-    workChart
+    workChart,
+    categories,
   }
 }
 </script>
