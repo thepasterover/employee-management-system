@@ -24,7 +24,7 @@ export default {
   plugins: [
     '@/plugins/vue-awesome-countdown',
     '@/plugins/vue-observe-visibility',
-    '@/plugins/vue-apexchart'
+    {src: '@/plugins/vue-apexchart', ssr: false}
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)

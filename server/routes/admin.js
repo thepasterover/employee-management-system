@@ -33,6 +33,8 @@ router.get('/attendance/:id', adminController.getAttendances)
 // Work Routes
 router.get('/work', adminController.getAllWorks)
 
+router.get('/work/day', adminController.getWorkByDay)
+
 router.post('/work/add', adminController.addWork)
 
 router.post('/work/delete', adminController.delWork)

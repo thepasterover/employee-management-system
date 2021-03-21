@@ -190,6 +190,22 @@ exports.updateAttendance = async(req, res, next) => {
     }
 }
 
+exports.getWorkByDay = async(req, res, next) => {
+    try{
+        let works = await Work.aggregate([
+            { $group : {
+                _id : { category: '$category', date: '$date'},
+                count: { $sum: '$quantity' },
+                },
+            },
+            { $sort: { _id: 1 }}
+        ])
+        res.json(works)
+    } catch(err) {
+        console.log(err)
+    }
+}
+
 exports.getAllWorks = async(req, res, next) => {
     try {
         let works = await Work.find()
