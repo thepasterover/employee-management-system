@@ -97,6 +97,7 @@ import SalPopup from '~/components/salPopup.vue'
 import moment from 'moment'
 
 export default {
+    middleware: 'auth',
     components: {
         SalPopup
     },

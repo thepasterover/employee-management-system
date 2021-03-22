@@ -74,6 +74,9 @@
 
 <script>
 export default {
+
+		// TODO: Change chart code to modift catgs
+
     data() {
 			return {
 				dialog: false,
@@ -84,10 +87,6 @@ export default {
 			}
 		},
 
-	// created() {
-	// 	console.log(this.$auth.user)
-	// }
-
 	methods: {
 		async submit() {
 			try {
@@ -95,6 +94,7 @@ export default {
 				await this.$axios.$post('admin/category/add', {
 					category: this.category
 				})
+				this.items.push(this.category)
 				this.category = null
 			} catch(err) {
 				console.log(err)
@@ -107,6 +107,7 @@ export default {
 				await this.$axios.$post('admin/category/delete', {
 					category: item
 				})
+				this.items = this.items.filter(i => i != item)
 			} catch {
 				console.log(err)
 			}
