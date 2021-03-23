@@ -18,8 +18,14 @@
           <v-form ref="form">
             <v-menu offset-y>
               <template v-slot:activator="{ on, attrs }">
-                <v-text-field color="mainpurple"
-                label="Date" :value="formattedDate" v-bind="attrs" v-on="on"></v-text-field>
+                <v-text-field 
+                color="mainpurple"
+                label="Date" 
+                :value="formattedDate" 
+                v-bind="attrs" 
+                v-on="on"
+                :rules="inputRules"
+                ></v-text-field>
               </template>
               <v-date-picker v-model="salDate" color="mainpurple"></v-date-picker>
             </v-menu>
@@ -35,6 +41,7 @@
             color="mainpurple"
             label="Salary" 
             v-model="salary"
+            :rules=numberRules
             >
             </v-text-field>
             <v-menu offset-y>
@@ -43,7 +50,7 @@
                 color="mainpurple"
                 label="Month" 
                 :value="formattedMonth"
-                :rules="monthRules"
+                :rules="inputRules"
                 v-bind="attrs" 
                 v-on="on"
                 >
@@ -61,6 +68,7 @@
             :items="selectItems"
             label="Type"
             v-model="selectedType"
+            :rules=inputRules
             ></v-select>
             
             <v-row justify="end">
@@ -92,11 +100,13 @@ export default {
       ],
       selectedType: null,
       inputRules: [
-        v => !!v || 'Employee is required',
+        v => !!v || 'Required Field',
       ],
-      monthRules: [
-        v => !!v || 'Month is required',
-      ] 
+      numberRules: [
+        v => !!v || 'Required Field.',
+        v => !!Number.isInteger(Number(v)) || 'Enter a valid Number',
+        v => Number(v) > 0 || 'Number must be greater than 0.'
+      ]
     }
   },
   methods: {

@@ -50,7 +50,7 @@
 				<div v-for="(item, i) in items" :key="i">
 					<v-row class="pa-4 pt-2">
 						<v-col>
-							<h2 class="white--text"> {{item}} </h2>
+							<h3 class="white--text"> {{item}} </h3>
 						</v-col>
 						<v-btn
 							color="white"

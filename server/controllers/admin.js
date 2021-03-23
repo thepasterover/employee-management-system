@@ -6,6 +6,7 @@ const Attendance = require('../models/attendance')
 const AttendanceDay = require('../models/attendanceDay')
 const Work = require('../models/work')
 const Admin = require('../models/admin')
+const bcrypt = require('bcrypt')
 
 exports.getEmployees = async(req, res, next) => {
     try{

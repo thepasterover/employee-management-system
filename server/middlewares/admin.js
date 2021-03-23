@@ -12,7 +12,7 @@ module.exports = async (req, res, next) => {
             req.id = user._id
             next()
         } else {
-            throw new CustomError("Not Authorized", 401)
+            throw new CustomError("Not Authorized", 403)
         }
         
     } catch(err) {

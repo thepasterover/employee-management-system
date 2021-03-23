@@ -18,8 +18,14 @@
             <v-form ref="form">
               <v-menu offset-y>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-text-field color="mainpurple"
-                  label="Date" :value="formattedDate" v-bind="attrs" v-on="on"></v-text-field>
+                  <v-text-field 
+                  color="mainpurple"
+                  label="Date" 
+                  :value="formattedDate" 
+                  v-bind="attrs" 
+                  v-on="on"
+                  :rules="[rules.required]"
+                  ></v-text-field>
                 </template>
                 <v-date-picker v-model="date" color="mainpurple"></v-date-picker>
               </v-menu>
@@ -27,20 +33,25 @@
                 color="mainpurple"
                 label="Quantity" 
                 v-model="quantity"
+                :rules="[rules.required, rules.number, rules.positive]"
               >
               </v-text-field>
               <v-text-field
                 color="mainpurple"
                 label="Price" 
                 v-model="price"
+                :rules="[rules.required, rules.positive]"
               >
               </v-text-field>
-              <v-text-field
+              <v-select
+                :items=categories
+                label="Category"
                 color="mainpurple"
-                label="Category" 
                 v-model="category"
+                :rules="[rules.required]"
               >
-              </v-text-field>
+
+              </v-select>
               <v-row justify="end">
                 <v-btn text class="mainpurple mr-10 mt-3 white--text text-capitalize" @click="submit" >Submit</v-btn>
               </v-row>
@@ -60,7 +71,15 @@ export default {
       date: null,
       quantity: null,
       price: null,
-      category: null
+      category: null,
+      categories: [
+        ...this.$auth.user.categories
+      ],
+      rules: {
+        required: v => !!v || 'Required Field.',
+        number: v => !!Number.isInteger(Number(v)) || 'Enter a valid Number',
+        positive: v => Number(v) > 0 || 'Enter a valid Positive Number'
+      }
     }
   },
 
@@ -74,6 +93,7 @@ export default {
           price: this.price,
           category: this.category
         }
+        console.log(temp)
         this.dialog = false
         this.$emit('add-work', temp)
         this.date = null

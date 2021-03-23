@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const CustomError = require('../error')
 
 const Admin = require('../models/admin')
 
@@ -9,16 +10,21 @@ exports.adminLogin = async(req, res, next) => {
         let password = req.body.password
         
         let user = await Admin.findOne({email: email})
-        // let match = await bcrypt.compare(password, user.password)
+        if(!user){
+            throw new CustomError("User not found! Check your credentials", 401)
+        }
+        let match = await bcrypt.compare(password, user.password)
         let token
-        //if(match){
-            token = jwt.sign({ data: user._id }, process.env.JWT_SECRET)
-        //}
+        if(match){
+            token = jwt.sign({ data: user._id }, process.env.JWT_SECRET, { expiresIn: '3d' })
+        } else {
+            throw new CustomError("Incorrect Password", 401)
+        }
         res.json(
             token
         )
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 

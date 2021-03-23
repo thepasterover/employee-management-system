@@ -3,30 +3,27 @@
     <v-toolbar class="px-2" width="100%">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <h3 class="pl-2" >Abarna Sports wear</h3>
+      
       <v-spacer></v-spacer>
+      <!-- <img src="../assets/images/logo.jpg" alt="as_creations_company_logo" height="80px" width="80px"> -->
       <div v-if="$auth.loggedIn">
         <v-btn @click="$auth.logout()" 
         depressed
         color="error"
         >Logout</v-btn>
       </div>
-      <!-- <div v-else>
-        
-      </div> -->
-      <!-- <v-avatar color="#645DF6" size="35">
-        <span class="white--text">VJ</span>
-      </v-avatar> -->
+
     </v-toolbar>
 
-    <v-navigation-drawer v-model="drawer" color="white" app temporary>
+    <v-navigation-drawer v-model="drawer" color="mainpurple" app temporary  dark>
       <v-list class="mt-2">
         <v-list-item v-for="(item, i) in navItems" :key="i" class="pl-8 mt-2 tile" :to="item.route" active-class="active--nav" nuxt>
 
           <v-list-item-icon>
-            <v-icon color="black">{{item.icon}}</v-icon>
+            <v-icon>{{item.icon}}</v-icon>
           </v-list-item-icon>
 
-          <v-list-item-content class="pl-1 black--text">
+          <v-list-item-content class="pl-1">
             <v-list-item-title>
               {{item.title}}
             </v-list-item-title>
@@ -60,7 +57,7 @@ export default {
 }
 
 .tile:active {
-  color: #ffffff;
+  color: #ffffff !important;
   background: #6659FF;
 }
 
