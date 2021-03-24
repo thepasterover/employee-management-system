@@ -16,9 +16,9 @@
 </template>
 
 <script>
-import dashBoardCards from '../components/dashBoardCards.vue'
-import workChart from '../components/workChart.vue'
-import categories from '../components/categories'
+import dashBoardCards from '../components/dashboard/dashBoardCards.vue'
+import workChart from '../components/dashboard/workChart.vue'
+import categories from '../components/dashboard/categories'
 export default {
   middleware: 'auth',
   components: {

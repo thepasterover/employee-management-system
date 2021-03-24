@@ -25,7 +25,7 @@ exports.addEmployee = async(req, res, next) => {
             date: req.body.date,
             name: req.body.name,
             desg: req.body.desg,
-            email: (req.body.name).toLowerCase().replace(" ", "")
+            email: req.body.email
         })
 
         let cm = moment().format('YYYY-MM')
@@ -96,7 +96,7 @@ exports.getEmployee = async(req, res, next) => {
             employee
         })
     } catch(err){
-
+        console.log(err)
     }
 }
 

@@ -36,6 +36,14 @@
             :rules="designationRules"
             >
             </v-text-field>
+            <v-text-field
+            color="mainpurple"
+            label="Email"
+            v-model="email"
+            :rules="emailRules" 
+            >
+
+            </v-text-field>
             <v-row justify="end">
               <v-btn text class="mainpurple mr-10 mt-3 white--text text-capitalize" @click="submit" >Add Employee</v-btn>
             </v-row>
@@ -56,6 +64,7 @@ export default {
       joined: null,
       name: '',
       designation: '',
+      email: '',
       nameRules: [
         v => !!v || 'Name is required',
         v => v.length >= 4 || 'Name must be more than 4 characters'
@@ -63,6 +72,14 @@ export default {
       designationRules: [
         v => !!v || 'Designation is required',
         v => v.length >= 4 || 'Designation must be more than 4 characters'
+      ],
+      emailRules: [
+        v => !!v || 'Email is required',
+        v => v.length >= 4 || 'Email must be more than 4 characters',
+        v => {
+          let pattern = /^\S+@\S+[\.][0-9a-z]+$/
+          return pattern.test(v) || 'Enter a valid email!'
+        }
       ]
     }
   },
@@ -73,6 +90,7 @@ export default {
           date: this.joined,
           name: this.name,
           desg: this.designation,
+          email: this.email
         }
         this.$emit('add-employee', this.item)
         this.item = null

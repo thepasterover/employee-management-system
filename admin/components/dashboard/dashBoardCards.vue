@@ -30,15 +30,15 @@
 <script>
 
 export default {
-  // TODO: Instead of Salary and Advance sort by categories
+  // DONE: Instead of Salary and Advance sort by categories
   data(){
     return {
       totEmps: '00',
       items: [
-        { title: 'Present Employees', icon: 'mdi-account-outline', data: null, subtext: 'Employees' },
-        { title: 'Total Work this Month', icon: 'mdi-tshirt-crew-outline', data: null, subtext: 'Products' },
-        { title: 'Total Advance this month', icon: 'mdi-credit-card-outline', data: 5000, subtext: 'Rs.' },
-        { title: 'Total Salary this month', icon: 'mdi-credit-card-outline', data: 100000, subtext: 'Rs.' },
+        { title: 'Total Employees', icon: 'mdi-account-outline', data: null, subtext: 'Employees' },
+        { title: 'Total Work of Month', icon: 'mdi-tshirt-crew-outline', data: null, subtext: 'Products' },
+        { title: 'Total Advance of month', icon: 'mdi-credit-card-outline', data: null, subtext: 'Rs.' },
+        { title: 'Total Salary of month', icon: 'mdi-credit-card-outline', data: null, subtext: 'Rs.' },
       ]
     }
   },
@@ -52,25 +52,35 @@ export default {
       // Get Works by Mont
       data = await this.$axios.$get('admin/work')
       let totWork = 0
-      data.works.forEach(d => {
-        if(this.$moment(d.date).format('YYYY-MM') == this.$moment().format('YYYY-MM')){
-          totWork += d.quantity
-        }
-      })
-      this.items[1].data = totWork < 10 ? '0' + totWork  : totWork
+      if(data.works.length >= 1){
+        data.works.forEach(d => {
+          if(this.$moment(d.date).format('YYYY-MM') == this.$moment().format('YYYY-MM')){
+            totWork += d.quantity
+          }
+        })
+        this.items[1].data = totWork < 10 ? '0' + totWork  : totWork
+      }
+
+      // Get salary and Advance
+      let totSal = 0
+      let totAdv = 0
+      let temp = await this.$axios.$get('admin/salary')
+      if(temp.salaries.length >= 1){
+        temp.salaries.forEach(s => {
+          if(this.$moment(s.month).format('YYYY-MM') == this.$moment().format('YYYY-MM')){
+            if(s.type.toLowerCase() === 'salary'){
+              totSal += s.salary
+            } else {
+              totAdv += s.salary
+            }
+          }
+        })
+        this.items[2].data = totAdv < 10 ? '0' + totAdv : totAdv
+        this.items[3].data = totSal < 10 ? '0' + totSal  : totSal
+      }
     } catch(err) {
       console.log(err)
     }
   },
-
-  computed: {
-    compTotEmps() {
-      if(totEmps){
-        return totEmps > 10 ? '0' + totEmps : totEmps
-      } else {
-        return '00'
-      }
-    }
-  }
 }
 </script>

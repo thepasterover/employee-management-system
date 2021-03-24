@@ -21,61 +21,7 @@
     <v-divider class="my-2"></v-divider>
     <v-row >
       <v-col cols="12" md="6" offset-sm="1" offset-md="0">
-        <v-card max-width="600" elevation="0">
-          <v-row class="pa-4" >
-            <h3 class="textheadpurple--text">Employee Info</h3>
-          </v-row>
-          <v-divider></v-divider>
-          <v-row class="pa-7 pb-10 mt-n3" justify="center" align="center" align-content="center">
-            <v-col class="pl-6 pt-5" cols="12" lg="4" align-self="center" offset="5" offset-sm="7" offset-md="0" >
-              <v-avatar color="mainpurple" size="110">
-                <span class="white--text"> VJ </span>
-              </v-avatar>
-            </v-col>
-            <v-col class="mb-n7" offset="1" offset-sm=2 offset-md="0">
-              <v-row class="mt-n3">
-                  <v-col cols="5">
-                    <h4 class="subtextgrey--text subtitle-1 text-capitalize">Joined Date: </h4> 
-                  </v-col>
-                  <v-col cols="6">
-                    <h4 class="textheadpurple--text">{{formattedDate(employeeData.date)}}</h4>
-                  </v-col>
-              </v-row>
-              <v-row class="mt-n5">
-                  <v-col cols="5">
-                    <h4 class="subtextgrey--text subtitle-1 text-capitalize">Name: </h4> 
-                  </v-col>
-                  <v-col cols="6">
-                    <h4 class="textheadpurple--text text-capitalize">{{employeeData.name}}</h4>
-                  </v-col>
-              </v-row>
-              <v-row class="mt-n5">
-                  <v-col cols="5">
-                    <h4 class="subtextgrey--text subtitle-1 text-capitalize">Email: </h4> 
-                  </v-col>
-                  <v-col cols="6">
-                    <h4 class="textheadpurple--text ">{{employeeData.email}}</h4>
-                  </v-col>
-              </v-row>
-              <v-row class="mt-n5">
-                  <v-col cols="5">
-                    <h4 class="subtextgrey--text subtitle-1 text-capitalize">Designation: </h4> 
-                  </v-col>
-                  <v-col cols="6">
-                    <h4 class="textheadpurple--text text-capitalize">{{employeeData.desg}}</h4>
-                  </v-col>
-              </v-row>
-              <v-row class="mt-n5">
-                  <v-col cols="5">
-                    <h4 class="subtextgrey--text subtitle-1 text-capitalize">Status: </h4> 
-                  </v-col>
-                  <v-col cols="6">
-                    <h4 class="textheadpurple--text text-capitalize">{{employeeData.status}}</h4>
-                  </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-        </v-card>
+        <employee-info :employeeData="employeeData" />
       </v-col>
       <v-col offset-sm="1" offset-md="0">
         <v-card max-width="600" elevation="0">
@@ -85,7 +31,7 @@
           <v-divider></v-divider>
           <v-row justify="center" align="center" align-content="center" class="mt-5 ml-1">
             <v-col offset-sm="1">
-              <div  class="caption"> Work Done </div>
+              <div class="caption"> Work Done </div>
               <h1> {{getTotalWorkDone}} </h1>
             </v-col>
             <v-col>
@@ -176,7 +122,7 @@
             :width="40"
             :color="day.sheetColor"
             rounded
-            class="pa-2 pl-3"
+            class="pa-2 text-center"
             @click="sheetColorManager(day)"
           ><span class="white--text" v-if="i < 9">0{{i + 1}}</span>
           <span class="white--text" v-else>{{i+1}}</span></v-sheet>
@@ -220,17 +166,20 @@
 
 <script>
 import moment from 'moment'
-import editDialog from '../../components/editDialog'
+import employeeInfo from '../../components/employee/employeeInfo'
+import editDialog from '../../components/employee/editDialog'
+
 
 export default {
   components: {
-    editDialog
+    editDialog,
+    employeeInfo
   },
   data() {
     return {
       dialog: false,
-      employeeData: {},
       value: 0,
+      employeeData: {},
       present: null,
       absent: null,
       month: null,
@@ -240,9 +189,6 @@ export default {
       salary: 0,
       advance: 0,
       totalWorkDone: 0,
-
-
-
 
       headers: [
         {text: 'Date', value: 'date', class: 'textheadpurple--text'},
