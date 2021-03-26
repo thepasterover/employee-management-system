@@ -32,13 +32,10 @@ exports.addEmployee = async(req, res, next) => {
         let attendance = await Attendance.findOne({year_month: cm})
     
         for(let d of attendance.days){
-            let attendancedays = await AttendanceDay.findById(d)
-            attendancedays.employees.push({
-            empId: employee
+            await AttendanceDay.findByIdAndUpdate(d, {
+                $push: {employees: {empId: employee}}
             })
-            await attendancedays.save()
         }
-
         res.json({
             message: 'Employee Added'
         })
@@ -70,16 +67,16 @@ exports.delEmployee = async(req, res, next) => {
         let attendances =  await Attendance.find()
         
         for(let a of attendances){
-            for(let day of a.days) {
-                let attendancedays = await AttendanceDay.findById(day)
-                attendancedays.employees = attendancedays.employees.filter(e => e.empId.toString() != req.body.id.toString())
-                await attendancedays.save()
+            for(let d of a.days) {
+                await AttendanceDay.findByIdAndUpdate(d, {
+                    $pull: { employees:  {empId: employee} }
+                })
             }
         }
 
-        // for(let w of employee.works){
-        //     await Work.findByIdAndDelete(w)
-        // }
+        for(let s of employee.salaries){
+            await Salary.findByIdAndDelete(s)
+        }
         
         res.json({
             message: 'Employee deleted'
@@ -221,7 +218,7 @@ exports.getAllWorks = async(req, res, next) => {
 
 exports.getWorksById = async(req, res, next) => {
     try {
-        let works = await Work.find({employee: req.params.id}) //Employee.findById(req.params.id).populate('works').select('name works -_id')
+        let works = await Work.find({employee: req.params.id})
         res.json({
             works
         })
@@ -239,10 +236,6 @@ exports.addWork = async(req, res, next) => {
             category: req.body.category,
             employee: req.body.employee,
         })
-        // await Employee.findByIdAndUpdate(
-        //     req.body.employee, {$push: {works: work}}
-        // )
-        
         res.json({
             message: 'Work Added'
         })
@@ -297,48 +290,3 @@ exports.delCategory = async (req, res, next) => {
 
 
 ///////////////////////////////////////////////////
-
-exports.createOneTimeAttendances = async(req, res, next) => {
-    try{
-        let attendance = await Attendance.create({
-            year_month: '2021-03'
-        })
-        let employees = await Employee.find().select('_id')
-        for(let i=1; i<=31; i++){
-            let attendancedays = await AttendanceDay.create({
-                day: i,
-            })
-            for(let emp of employees){
-                let tempObj = {
-                    empId: emp,
-                }
-                attendancedays.employees.push(tempObj)
-            }
-            await attendancedays.save()
-            attendance.days.push(attendancedays)
-            await attendance.save()
-        }
-        console.log("Hello")
-        res.json(attendance)
-        
-    } catch(err) {
-        console.log(err)
-    }
-}
-
-exports.getDates = async(req, res, next) => {
-    try{
-        let employee = await Employee.findById('6009c16f4be2090818142ee3')
-        for(let w of employee.works){
-            await Work.findByIdAndDelete(w)
-        }
-        
-        res.json({
-            employee
-        })
-    } catch(err) {
-        console.log(err)
-    }   
-}
-
-// let days = moment(cm, 'YYYY-MM').daysInMonth()

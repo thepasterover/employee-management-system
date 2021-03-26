@@ -64,7 +64,7 @@
           :height="20"
           :width="20"
           color="subtextgrey"></v-sheet>
-          <span class="pl-4 subtitle-2">Undefined</span> 
+          <span class="pl-4 subtitle-2">Holiday</span> 
           </v-row>
         </v-col>
         <v-col class="pt-6" sm=2 md=2>

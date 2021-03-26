@@ -2,12 +2,17 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const cron = require('node-cron')
 require('dotenv').config()
+
+const port = process.env.PORT || 3000
 
 const authRoutes = require('./routes/auth')
 const adminRoutes = require('./routes/admin')
 
 const isAdmin = require('./middlewares/admin')
+
+const cronController = require('./controllers/cron')
 
 const app = express()
 app.use(cors())
@@ -20,15 +25,18 @@ app.use(
 	})
 )
 
-mongoose.connect(`mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0-shard-00-00.m6ew8.mongodb.net:27017,cluster0-shard-00-01.m6ew8.mongodb.net:27017,cluster0-shard-00-02.m6ew8.mongodb.net:27017/${process.env.MONGO_DB}?ssl=true&replicaSet=atlas-i8464a-shard-0&authSource=admin&retryWrites=true&w=majority`, {
+mongoose.connect(`mongodb+srv://paste_rover:${process.env.MONGO_PASS}@cluster0.m6ew8.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 	useFindAndModify: false,
 })
 mongoose.set('useCreateIndex', true)
 
-app.use('/auth', authRoutes)
-app.use('/admin', isAdmin, adminRoutes)
+// cron job for marking everyone as present
+cron.schedule('0 8 * * *', cronController.updateDailyAtt)
+cron.schedule('0 0 1 * * ', cronController.createMonthlyAttChart)
+app.use('/api/auth', authRoutes)
+app.use('/api/admin', isAdmin, adminRoutes)
 
 app.use((req, res, next) => {
 	var error = new Error('Route not found')
@@ -45,4 +53,4 @@ app.use((error, req, res, next) => {
 })
 
 
-app.listen(5000)
+app.listen(port)

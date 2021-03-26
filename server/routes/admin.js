@@ -49,6 +49,4 @@ router.post('/category/add', adminController.addCategory)
 router.post('/category/delete', adminController.delCategory)
 
 
-// router.get('/test', adminController.getDates)
-
 module.exports = router

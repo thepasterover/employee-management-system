@@ -53,7 +53,6 @@ export default {
         grandArr.push({name: c, data: []})
       })
       grandArr = grandArr.splice(0, 4)
-      console.log(grandArr)
       let data = await this.$axios.$get('admin/work/day')
       data.forEach(d => {
         let gIndex = grandArr.findIndex(g => g.name == d._id.category)

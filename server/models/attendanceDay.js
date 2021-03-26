@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema;
 
 const AttendanceDaySchema = new Schema({
+    day: Number,
     employees: [{
         empId: {
             type: Schema.Types.ObjectId,
