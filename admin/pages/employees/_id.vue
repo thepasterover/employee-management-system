@@ -144,6 +144,7 @@
         <v-data-table
         :headers=headers
         :items=works
+        show-group-by
         >
         <template v-slot:item.actions = {item}>
             <v-icon
@@ -155,8 +156,16 @@
               mdi-delete
             </v-icon>
         </template>
-          <template v-slot:item.total = {item}>
-            {{item.price * item.quantity}}
+        <template v-slot:item.total = {item}>
+          {{item.price * item.quantity}}
+        </template>
+        <template slot="body.append">
+          <tr>
+            <th>{{null}}</th>
+            <th>Total</th>
+            <th>{{sumField('quantity')}}</th>
+            <th>{{sumField('price')}}</th> 
+          </tr>
         </template>
         </v-data-table>
       </v-col>
@@ -192,9 +201,10 @@ export default {
 
       headers: [
         {text: 'Date', value: 'date', class: 'textheadpurple--text'},
+        {text: 'Category', value: 'category', class: 'textheadpurple--text'},
         {text: 'Quantity', value: 'quantity', class: 'textheadpurple--text'},
         {text: 'Price', value: 'price', class: 'textheadpurple--text'},
-        {text: 'Category', value: 'category', class: 'textheadpurple--text'},
+        
         {text: 'Total', value: 'total', class: 'textheadpurple--text'},
         {text: 'Actions', value: 'actions', class: 'textheadpurple--text', sortable: false},
       ],
@@ -223,7 +233,10 @@ export default {
   },
 
   methods: {
-    
+    sumField(key) {
+        // sum data in give key (property)
+        return this.works.reduce((a, b) => a + (b[key] || 0), 0)
+    },
     
     formattedDate(d){
       return d ? moment(d).format('DD MMM YYYY') : ''
@@ -390,6 +403,9 @@ export default {
       this.outstanding = this.totalWorkDone - (this.salary + this.advance)
       return this.outstanding
     },
+    getTotalWork() {
+      
+    }
 
     
     
