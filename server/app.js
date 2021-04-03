@@ -5,10 +5,11 @@ const cors = require('cors')
 const cron = require('node-cron')
 require('dotenv').config()
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 5000
 
 const authRoutes = require('./routes/auth')
 const adminRoutes = require('./routes/admin')
+const employeeRoutes = require('./routes/employee')
 
 const isAdmin = require('./middlewares/admin')
 
@@ -37,6 +38,7 @@ cron.schedule('0 8 * * *', cronController.updateDailyAtt)
 cron.schedule('0 0 1 * * ', cronController.createMonthlyAttChart)
 app.use('/api/auth', authRoutes)
 app.use('/api/admin', isAdmin, adminRoutes)
+app.use('/api/employee', employeeRoutes)
 
 app.use((req, res, next) => {
 	var error = new Error('Route not found')
