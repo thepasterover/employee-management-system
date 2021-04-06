@@ -12,6 +12,7 @@ const adminRoutes = require('./routes/admin')
 const employeeRoutes = require('./routes/employee')
 
 const isAdmin = require('./middlewares/admin')
+const isEmployee = require('./middlewares/employee')
 
 const cronController = require('./controllers/cron')
 
@@ -38,7 +39,7 @@ cron.schedule('0 8 * * *', cronController.updateDailyAtt)
 cron.schedule('0 0 1 * * ', cronController.createMonthlyAttChart)
 app.use('/api/auth', authRoutes)
 app.use('/api/admin', isAdmin, adminRoutes)
-app.use('/api/employee', employeeRoutes)
+app.use('/api/employee', isEmployee, employeeRoutes)
 
 app.use((req, res, next) => {
 	var error = new Error('Route not found')

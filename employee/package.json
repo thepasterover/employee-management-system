@@ -11,8 +11,10 @@
   "dependencies": {
     "@nuxtjs/auth-next": "5.0.0-1616003482.75c20e6",
     "@nuxtjs/axios": "^5.13.1",
+    "apexcharts": "^3.26.0",
     "core-js": "^3.9.1",
-    "nuxt": "^2.15.3"
+    "nuxt": "^2.15.3",
+    "vue-apexcharts": "^1.6.0"
   },
   "devDependencies": {
     "@nuxtjs/vuetify": "^1.11.3"

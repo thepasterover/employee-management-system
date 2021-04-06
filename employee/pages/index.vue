@@ -1,13 +1,16 @@
 <template>
   <div>
     <dash-board-cards />
+    <work-chart />
   </div>
 </template>
 
 <script>
-import dashBoardCards from '../components/dashboardCards'
+import dashBoardCards from '../components/dashboard/dashboardCards'
 export default {
-  components: { dashBoardCards },
+  components: { 
+    dashBoardCards,
+  },
   middleware: 'auth',
   async created() {
     try{

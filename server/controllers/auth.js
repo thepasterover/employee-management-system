@@ -74,7 +74,6 @@ exports.employeeMe = async(req, res, next) => {
             employee: employee,
             works: works
         }
-        console.log(user)
         res.json({user: user})
     } catch(err) {
         console.log(err)
