@@ -5,6 +5,7 @@ const Salary = require('../models/salary')
 const Attendance = require('../models/attendance')
 const AttendanceDay = require('../models/attendanceDay')
 const Work = require('../models/work')
+const Category = require('../models/category')
 
 exports.getSalaries = async(req, res, next) => {
     try {
@@ -115,12 +116,29 @@ exports.getCardsData = async(req, res, next) => {
 }
 
 
-exports.getWorkChart = async() => {
+exports.getWorkChart = async(req, res, next) => {
     try {
-        let works = await Work.find({employee: req.id})
+        let works = await Work.aggregate([
+            {$match: {employee: req.id}},
+            { $group : {
+                _id : { category: '$category', date: '$date'},
+                count: { $sum: '$quantity' },
+                },
+            },
+            { $sort: { _id: 1 }}
+        ])
         res.json(
             works
         )
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+exports.getCategories = async(req, res, next) => {
+    try {
+        let categories = await Category.find()
+        res.json(categories)
     } catch(err) {
         console.log(err)
     }
