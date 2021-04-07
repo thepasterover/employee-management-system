@@ -18,6 +18,26 @@ exports.getSalaries = async(req, res, next) => {
     }
 }
 
+exports.getSalariesByMonth = async(req, res, next) => {
+    try {
+        let cy = parseInt(moment().format('YYYY'))
+        let lastyearDate = '01/02/' + (cy - 1)
+        let nextYearDate = '01/31/' + (cy + 1)
+        let salaries = await Salary.aggregate([
+            {$match: {employee: req.id, month : { $gte : new Date(lastyearDate), $lte: new Date(nextYearDate)}}},
+            { $group : {
+                _id : {  type: '$type', month: '$month'},
+                amount: { $sum: '$salary' }
+                },
+                
+            },
+            { $sort: { '_id.month': 1 }}
+        ])
+        res.json(salaries)
+    } catch(err) {
+        console.log(err)
+    }
+}
 
 exports.getCardsData = async(req, res, next) => {
     try {
