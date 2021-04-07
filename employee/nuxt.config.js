@@ -40,13 +40,15 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
+    '@nuxtjs/moment'
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    '@nuxtjs/auth-next'
+    '@nuxtjs/auth-next',
+    '@nuxtjs/moment'
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
@@ -95,7 +97,7 @@ export default {
           success: colors.green.accent3,
           appmainblue: '#316cf5',
           appgrey: '#9e9e9e',
-          holiday: '#9896B0',
+          holiday: '#ddd', //EBEDF0
           present: colors.green.darken2,
           absent: colors.deepOrange.accent4,
         }

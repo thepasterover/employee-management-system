@@ -11,5 +11,6 @@ router.get('/home/cards', employeeController.getCardsData)
 
 router.get('/home/chart', employeeController.getWorkChart)
 
+router.get('/home/attendance', employeeController.getAttendance)
 
 module.exports = router

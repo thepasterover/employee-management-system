@@ -10,7 +10,10 @@ export default {
     data() {
         return {
           series: [
-            
+            {data: [["2021-01-14T00:00:00.000Z", 10], ["2021-02-12T00:00:00.000Z", 8], ["2021-03-19T00:00:00.000Z", 5]], name: "Tshirt"},
+            {data: [["2021-01-14T00:00:00.000Z", 5], ["2021-02-12T00:00:00.000Z", 12], ["2021-03-19T00:00:00.000Z", 3]], name: "Shorts"},
+            // {data: [["2021-01-14T00:00:00.000Z", 1], ["2021-02-12T00:00:00.000Z", 8], ["2021-03-19T00:00:00.000Z", 3]], name: "Tshirt"},
+            // {data: [["2021-01-14T00:00:00.000Z", 1], ["2021-02-12T00:00:00.000Z", 8], ["2021-03-19T00:00:00.000Z", 3]], name: "Tshirt"}
           ],
           chartOptions: {
             stroke: {
@@ -41,6 +44,9 @@ export default {
             xaxis: {
               type: 'datetime',
             },
+            legend: {
+              position: 'top',
+            }
         }
       }
     },
@@ -60,7 +66,7 @@ export default {
             grandArr[gIndex].data.push([d._id.date, d.count])
             }
         })
-        this.series = [...grandArr]
+        // this.series = [...grandArr]
       } catch(err) {
         console.log(err)
       }

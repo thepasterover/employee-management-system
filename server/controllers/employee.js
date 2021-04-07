@@ -143,3 +143,30 @@ exports.getCategories = async(req, res, next) => {
         console.log(err)
     }
 }
+
+exports.getAttendance = async(req, res, next) => {
+    try {
+        let attendance = await Attendance.findOne({year_month: req.query.year_month})
+        .populate({
+            path: 'days', 
+            select: { 'employees': {$elemMatch: {empId: req.id}}}
+        })
+        let flag
+        if(attendance){
+            for(let a of attendance.days){
+                if(a.employees.length < 1){
+                    flag = true
+                    break
+                } 
+            }
+        }
+        if(flag){
+            attendance = null
+        }
+        res.json(
+            attendance
+        )
+    } catch(err) {
+        console.log(err)
+    }
+}
