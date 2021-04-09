@@ -22,6 +22,18 @@ const employeeSchema = new Schema({
     status:{
         type: String
     },
+    phone: {
+        type: Number
+    },
+    address: {
+        type: String
+    },
+    city: {
+        type: String
+    },
+    state: {
+        type: String
+    },
     salaries: [
         {
             type: Schema.Types.ObjectId,

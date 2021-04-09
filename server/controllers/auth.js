@@ -1,10 +1,12 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+
 const CustomError = require('../error')
 
 const Admin = require('../models/admin')
 const Employee = require('../models/employee')
 const Work = require('../models/work')
+
 
 exports.adminLogin = async(req, res, next) => {
     try{
@@ -69,12 +71,44 @@ exports.employeeLogin = async(req, res, next) => {
 exports.employeeMe = async(req, res, next) => {
     try {
         let employee = await Employee.findById(req.id).populate('salaries')
-        let works = await Work.find({employee: req.id})
         let user = {
             employee: employee,
-            works: works
         }
         res.json({user: user})
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+exports.changePasswordEmployee = async(req, res, next) => {
+    try {
+        if(req.body.token){
+            let newPass = req.body.password
+            let confirmPass = req.body.confPassword
+			let id = null
+            try {
+				let decodedToken = await jwt.verify(
+					req.body.token,
+					process.env.JWT_SECRET
+				)
+				id = decodedToken.data
+			} catch (err) {
+				throw new CustomError('Not Authorized', 403)
+			}
+            if (newPass != confirmPass) {
+				next(new CustomError("Password doesn't match", 400))
+			}
+            
+            let hash = bcrypt.hashSync(req.body.password, 10)
+            let employee = await Employee.findByIdAndUpdate(id, {
+                password: hash
+            })
+            res.json({
+                message: 'Password reset successfully! You will be redirected to homepage soon',
+            })
+        } else {
+			throw new CustomError('Token not found', 403)
+		}
     } catch(err) {
         console.log(err)
     }

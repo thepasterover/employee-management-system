@@ -1,5 +1,5 @@
 <template>
-    <div class="mt-14 pa-2">
+    <div class="mt-14 pa-1">
       <h3>Work Chart</h3>
      <apexchart type="line" :options="chartOptions" :series="series" :height=320  class="mt-5"></apexchart>
    </div>
@@ -45,7 +45,7 @@ export default {
               type: 'datetime',
             },
             legend: {
-              position: 'top',
+              position: 'bottom',
             }
         }
       }

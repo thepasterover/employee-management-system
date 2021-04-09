@@ -5,5 +5,9 @@
 
 $body-font-family: 'Inter';
 $heading-font-family: 'Inter';
+$badge-font-size: 19px;
+$badge-height: 32px;
+$badge-min-width: 32px;
+$badge-border-radius: 17px;
 
 @import '~vuetify/src/styles/styles.sass';

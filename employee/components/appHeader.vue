@@ -3,23 +3,21 @@
     <div align="center"> 
       <v-app-bar class="px-1 pa-1" flat>
         <v-app-bar-nav-icon @click="drawer = !drawer" class="hidden-md-and-up"></v-app-bar-nav-icon>
-        <h2>{{currentHead}}</h2>
-        <v-spacer></v-spacer>
-        <v-avatar
-          color="primary"
-          size="40"
-          class="white--text"
-        >AJ</v-avatar>
+        <h2>{{$store.state.head.appHead}}</h2>
       </v-app-bar>
     </div>
     <v-navigation-drawer v-model="drawer"  app >
       <v-list class="mt-2" nav>
         <v-list-item>
           <v-list-item-content class="pb-6">
-            <v-list-item-title class="appmainblue--text">
+            <NuxtLink to="/" >
+            <v-list-item-title class="appmainblue--text" @click="$store.commit('head/set', 'Overview')">
+              
               <v-icon class="mb-1 px-2" color="appmainblue">mdi-shopping-outline</v-icon>
               Abarna Sports Wear
+              
             </v-list-item-title>
+            </NuxtLink>
           </v-list-item-content>
         </v-list-item>
         <v-list-item 
@@ -29,7 +27,7 @@
         active-class="active--nav" 
         color="white" 
         nuxt
-        @click="currentHead = item.title"
+        @click="$store.commit('head/set', item.title)"
         >
           
           <v-list-item-icon>
@@ -56,6 +54,7 @@
         </div>
       </template>
     </v-navigation-drawer>
+    
   </div>
 </template>
 
@@ -66,12 +65,13 @@ export default {
         currentHead: 'Overview',
         drawer: true,
         navItems: [
-          {title: 'Overview', icon: 'mdi-home-variant-outline', route: '/'},
-          {title: 'Employees', icon: 'mdi-account-group-outline', route:'/employees'},
+          {title: 'Overview', icon: 'mdi-chart-donut', route: '/'},
           {title: 'Salary', icon: 'mdi-wallet-outline', route:'/salary'},
+          {title: 'Work', icon: 'mdi-briefcase-outline', route:'/work'},
+          {title: 'Profile', icon: 'mdi-account-outline', route:'/profile'}
         ]
       }
-    }
+    },
 }
 </script>
 
@@ -79,6 +79,10 @@ export default {
 
 .active--nav {
   background-color: #316cf5;
+}
+
+.nuxt-link-active{
+  text-decoration: none !important;
 }
 
 /* .tile:active {

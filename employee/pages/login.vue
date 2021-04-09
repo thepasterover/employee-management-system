@@ -10,7 +10,12 @@
             </v-row>
             <div class="pa-6 mt-7">
                 <v-form ref="form">
-                    <v-text-field v-model="email" color="mainpurple" label="Email" :rules="[rules.required, rules.max, rules.email]">
+                    <v-text-field 
+                    v-model="email" 
+                    color="mainpurple" 
+                    label="Email" 
+                    :rules="[rules.required, rules.max, rules.email]"
+                    >
                         Email
                     </v-text-field>
                     <v-text-field 
@@ -57,6 +62,11 @@
 
 <script>
 export default {
+    head() {
+        return{
+            title: 'Login'
+        }  
+    },
     data() {
         return {
             email: '',
@@ -68,7 +78,7 @@ export default {
                 required: v => !!v || 'Required Field',
                 max: v => (v || '').length <= 30 || 'Max 30 characters',
                 email: v => {
-                    let pattern = /^[\w.+\-]+@abarnasports\.com$/
+                    let pattern = /\S+@\S+\.\S+/
                     return pattern.test(v) || 'Enter a valid email!'
                 }
             }

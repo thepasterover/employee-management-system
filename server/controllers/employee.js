@@ -1,4 +1,10 @@
+const fs = require('fs');
+const path = require('path')
+
 const moment = require('moment')
+const nodemailer = require('nodemailer')
+const jwt = require('jsonwebtoken')
+const ejs = require('ejs')
 
 const Employee = require('../models/employee')
 const Salary = require('../models/salary')
@@ -7,9 +13,22 @@ const AttendanceDay = require('../models/attendanceDay')
 const Work = require('../models/work')
 const Category = require('../models/category')
 
+const CustomError = require('../error')
+
+var smtpTransport = nodemailer.createTransport({
+	// TODO Change Credentials
+	service: 'gmail',
+	secure: true,
+	auth: {
+		user: process.env.GMAIL,
+		pass: process.env.GMAIL_APP_PASS,
+	},
+})
+
+
 exports.getSalaries = async(req, res, next) => {
     try {
-        let salaries = await Salary.find({employee: req.id})
+        let salaries = await Salary.find({employee: req.id}).select('-_id date month salary type')
         res.json({
             salaries
         })
@@ -155,6 +174,7 @@ exports.getWorkChart = async(req, res, next) => {
     }
 }
 
+
 exports.getCategories = async(req, res, next) => {
     try {
         let categories = await Category.find()
@@ -186,6 +206,71 @@ exports.getAttendance = async(req, res, next) => {
         res.json(
             attendance
         )
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+exports.getWorks = async(req, res, next) => {
+    try {
+        let works = await Work.find({employee: req.id}).select('-_id category date price quantity')
+        res.json(works)
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+exports.updateProfile = async(req, res, next) => {
+    try {
+        await Employee.findByIdAndUpdate(req.id, {
+            name: req.body.name,
+            phone: req.body.phone,
+            address: req.body.address,
+            city: req.body.city,
+            state: req.body.state,
+            zip: req.body.zip
+        })
+        res.json({
+            message: 'Profile Updated Successfully!'
+        })
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+exports.sendResetPasswordEmail = async(req, res, next) => {
+    try {
+        console.log(path.join(__dirname, '..', 'views', 'reset-password.ejs').toString())
+        let email = req.body.email
+        let employee = await Employee.findOne({email: email}).orFail(
+            new CustomError('Email ID does not exists!', 404)
+        )
+
+        var token = await jwt.sign(
+            {
+                data: employee._id
+            },
+            process.env.JWT_SECRET, 
+            { expiresIn: '3d' }
+        )
+        var mailOptions = {
+            from: 'boopalanshettiyar78@gmail.com',
+            to: req.body.email,
+            subject: 'Reset Password - Abarna Sports Wear',
+            html: ejs.compile(
+                    fs.readFileSync(
+                        path.join(__dirname, '..', 'views', 'reset-password.ejs').toString(),
+                        'utf-8'
+                    )
+                )({
+					name: employee.name,
+					link: 'http://localhost:4000/' + 'reset-password?token=' + token,
+				}),
+        }
+        await smtpTransport.sendMail(mailOptions)
+        res.json({
+            message: 'Reset Password email has been sent!'
+        })
     } catch(err) {
         console.log(err)
     }

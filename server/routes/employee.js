@@ -15,4 +15,10 @@ router.get('/home/chart', employeeController.getWorkChart)
 
 router.get('/home/attendance', employeeController.getAttendance)
 
+router.get('/works', employeeController.getWorks)
+
+router.post('/profile/update', employeeController.updateProfile)
+
+router.post('/profile/resetpassword', employeeController.sendResetPasswordEmail)
+
 module.exports = router
