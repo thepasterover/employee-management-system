@@ -174,9 +174,11 @@
                 depressed
                 class="error--text text-capitalize subtitle-1"
                 @click="resetPassword"
+                :disabled="clickedFlag"
                 >
                 Reset Password
                 </v-btn>
+                <p class="error--text caption ml-1" v-if="clickedFlag">Resend Email in  {{minutes}} Minutes {{seconds}} secs</p>
             </v-col>
           </v-row>
           
@@ -188,6 +190,7 @@
 </template>
 
 <script>
+import {mapState, mapActions} from 'vuex'
 export default {
   middleware: 'auth',
   head() {
@@ -230,6 +233,9 @@ export default {
     }
   },
   methods:{
+    ...mapActions({
+      setTimeInterval: 'timer/setTimeInterval'
+    }),
     async updateProfile() {
       try {
         if(this.$refs.form.validate()){
@@ -253,11 +259,13 @@ export default {
     async resetPassword() {
       try {
         let data = await this.$axios.$post('employee/profile/resetpassword', {
-          email: this.email
+          email: this.email,
+          cooldown: this.clickedFlag
         })
         this.message = data.message
         this.snackbarColor = 'appmainblue'
         this.snackbar = true
+        this.setTimeInterval(2)
       } catch(err) {
         if(err.response){
           this.message = err.response.data.error
@@ -267,8 +275,16 @@ export default {
           console.log(err)
         }
       }
-    }
+    },
   },
+  computed: {
+    ...mapState({
+      seconds: state => state.timer.seconds,
+      minutes: state => state.timer.minutes,
+      clickedFlag: state => state.timer.clicked
+    })
+  },
+
 }
 </script>
 

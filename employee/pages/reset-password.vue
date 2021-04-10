@@ -100,17 +100,23 @@ export default {
             password: this.password,
             confPassword: this.confPassword
           })
-          this.message = data.message
-          this.snackbarColor = '#73cfa6'
-          this.snackbar = true
-          console.log(data)
-          setTimeout(() => {
-            this.$router.push('/')
-          }, 3500)
-          
+          if(data.message.flag){
+            this.message = data.message
+            this.snackbarColor = '#73cfa6'
+            this.snackbar = true
+            setTimeout(() => {
+              this.$router.push('/')
+            }, 3500)
+          }
         }
       } catch(err) {
-        console.log(err)
+        if(err.response){
+          this.message = err.response.data.error
+          this.snackbarColor = 'error'
+          this.snackbar = true
+        } else {
+          console.log(err)
+        }
       }
     }
   }

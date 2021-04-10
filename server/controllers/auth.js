@@ -52,25 +52,27 @@ exports.employeeLogin = async(req, res, next) => {
             throw new CustomError("User not found! Check your credentials", 401)
         }
 
-        // let match = await bcrypt.compare(password, user.password)
+        let match = await bcrypt.compare(password, user.password)
         let token
-        // if(match){
+        if(match){
             token = jwt.sign({ data: user._id }, process.env.JWT_SECRET, { expiresIn: '3d' })
-        // } else {
-        //     throw new CustomError("Incorrect Password", 401)
-        // }
+        } else {
+            throw new CustomError("Incorrect Password", 401)
+        }
 
         res.json(
             token
         )
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
 exports.employeeMe = async(req, res, next) => {
     try {
-        let employee = await Employee.findById(req.id).populate('salaries')
+        let employee = await Employee.findById(req.id).populate('salaries').orFail(
+            new CustomError('Employee not found', 404)
+        )
         let user = {
             employee: employee,
         }
@@ -100,11 +102,12 @@ exports.changePasswordEmployee = async(req, res, next) => {
 			}
             
             let hash = bcrypt.hashSync(req.body.password, 10)
-            let employee = await Employee.findByIdAndUpdate(id, {
+            await Employee.findByIdAndUpdate(id, {
                 password: hash
             })
             res.json({
                 message: 'Password reset successfully! You will be redirected to homepage soon',
+                flag: true
             })
         } else {
 			throw new CustomError('Token not found', 403)

@@ -13,7 +13,6 @@
 import appHeader from '~/components/appHeader'
 export default {
   components: { appHeader },
-  
 }
 </script>
 

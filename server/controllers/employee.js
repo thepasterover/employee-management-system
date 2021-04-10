@@ -16,7 +16,6 @@ const Category = require('../models/category')
 const CustomError = require('../error')
 
 var smtpTransport = nodemailer.createTransport({
-	// TODO Change Credentials
 	service: 'gmail',
 	secure: true,
 	auth: {
@@ -229,18 +228,21 @@ exports.updateProfile = async(req, res, next) => {
             city: req.body.city,
             state: req.body.state,
             zip: req.body.zip
-        })
+        }).orFail(new CustomError('Employee not found', 404))
         res.json({
             message: 'Profile Updated Successfully!'
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
 exports.sendResetPasswordEmail = async(req, res, next) => {
     try {
-        console.log(path.join(__dirname, '..', 'views', 'reset-password.ejs').toString())
+        if(req.body.cooldown){
+            throw new CustomError('Wait for the email cooldown!', 403)
+        }
+        
         let email = req.body.email
         let employee = await Employee.findOne({email: email}).orFail(
             new CustomError('Email ID does not exists!', 404)
@@ -254,9 +256,9 @@ exports.sendResetPasswordEmail = async(req, res, next) => {
             { expiresIn: '3d' }
         )
         var mailOptions = {
-            from: 'boopalanshettiyar78@gmail.com',
+            from: process.env.GMAIL_FROM,
             to: req.body.email,
-            subject: 'Reset Password - Abarna Sports Wear',
+            subject: 'Reset Password',
             html: ejs.compile(
                     fs.readFileSync(
                         path.join(__dirname, '..', 'views', 'reset-password.ejs').toString(),
@@ -264,7 +266,7 @@ exports.sendResetPasswordEmail = async(req, res, next) => {
                     )
                 )({
 					name: employee.name,
-					link: 'http://localhost:4000/' + 'reset-password?token=' + token,
+					link: process.env.CONFIG_DOMAIN + 'reset-password?token=' + token,
 				}),
         }
         await smtpTransport.sendMail(mailOptions)
@@ -272,6 +274,6 @@ exports.sendResetPasswordEmail = async(req, res, next) => {
             message: 'Reset Password email has been sent!'
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
