@@ -26,6 +26,26 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="4000"
+      :color="snackbarColor"
+      top
+      elevation=0
+      app
+      >
+      {{message}}
+      <template v-slot:action="{ attrs }">
+        <v-icon
+        color="white"
+        size=23
+        v-bind="attrs"
+        @click="snackbar = false">
+            mdi-close-circle
+        </v-icon>
+      </template>
+        
+      </v-snackbar>
   </div>
 </template>
 
@@ -33,6 +53,9 @@
 export default {
     data() {
       return {
+        isChanged: false,
+        snackbar: false,
+        snackbarColor: '#73cfa6',
         items: [
           { icon: 'mdi-chart-line', data: '₹0', title: 'Total Salary', add: '+0₹', color: '#73cfa6', bg_color: '#daf2e6'},
           { icon: 'mdi-chart-box-outline', data: '₹0', title: 'Total Advance', add: '+0₹', color: '#316cf5', bg_color: '#e0eaff'},
@@ -50,7 +73,13 @@ export default {
         this.setItemsData(3, data.currentMonthWork, data.workGrowth)
         this.items[2].data = data.presentDays < 10 ? '0' + data.presentDays : data.presentDays 
       } catch(err) {
-        console.log(err)
+        if(err.response){
+          this.message = err.response.data.error
+          this.snackbarColor = 'error'
+          this.snackbar = true
+        } else {
+          console.log(err)
+        }
       }
     },
     

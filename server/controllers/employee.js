@@ -27,12 +27,14 @@ var smtpTransport = nodemailer.createTransport({
 
 exports.getSalaries = async(req, res, next) => {
     try {
-        let salaries = await Salary.find({employee: req.id}).select('-_id date month salary type')
+        let salaries = await Salary.find({employee: req.id}).select('-_id date month salary type').orFail(
+            new CustomError('Salaries not found', 404)
+        )
         res.json({
             salaries
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -53,7 +55,7 @@ exports.getSalariesByMonth = async(req, res, next) => {
         ])
         res.json(salaries)
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -149,7 +151,7 @@ exports.getCardsData = async(req, res, next) => {
             presentDays
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -169,7 +171,7 @@ exports.getWorkChart = async(req, res, next) => {
             works
         )
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -179,7 +181,7 @@ exports.getCategories = async(req, res, next) => {
         let categories = await Category.find()
         res.json(categories)
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -206,16 +208,18 @@ exports.getAttendance = async(req, res, next) => {
             attendance
         )
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
 exports.getWorks = async(req, res, next) => {
     try {
-        let works = await Work.find({employee: req.id}).select('-_id category date price quantity')
+        let works = await Work.find({employee: req.id}).select('-_id category date price quantity').orFail(
+            new CustomError('Your works not found', 404)
+            )
         res.json(works)
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 

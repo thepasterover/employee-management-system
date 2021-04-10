@@ -49,8 +49,26 @@
     class="mt-2 pa-2"
     :items=filteredItems
     >
-
     </v-data-table>
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="4000"
+      :color="snackbarColor"
+      top
+      elevation=0
+      app
+      >
+        {{message}}
+      <template v-slot:action="{ attrs }">
+        <v-icon
+        color="white"
+        size=23
+        v-bind="attrs"
+        @click="snackbar = false">
+            mdi-close-circle
+        </v-icon>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -58,6 +76,9 @@
 export default {
     data() {
       return {
+        snackbar: false,
+        snackbarColor: '#73cfa6',
+        message: null,
         month: null,
         items: [],
         headers: [
@@ -78,7 +99,13 @@ export default {
         })
         this.items = [...data.salaries]
       } catch(err) {
-        console.log(err)
+        if(err.response){
+          this.message = err.response.data.error
+          this.snackbarColor = 'error'
+          this.snackbar = true
+        } else {
+          console.log(err)
+        }
       }
     },
 

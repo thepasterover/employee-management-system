@@ -78,7 +78,7 @@ exports.employeeMe = async(req, res, next) => {
         }
         res.json({user: user})
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -98,13 +98,13 @@ exports.changePasswordEmployee = async(req, res, next) => {
 				throw new CustomError('Not Authorized', 403)
 			}
             if (newPass != confirmPass) {
-				next(new CustomError("Password doesn't match", 400))
+				throw new CustomError("Password doesn't match", 400)
 			}
             
             let hash = bcrypt.hashSync(req.body.password, 10)
             await Employee.findByIdAndUpdate(id, {
                 password: hash
-            })
+            }).orFail( new CustomError('Employee not found', 404) )
             res.json({
                 message: 'Password reset successfully! You will be redirected to homepage soon',
                 flag: true
@@ -113,6 +113,6 @@ exports.changePasswordEmployee = async(req, res, next) => {
 			throw new CustomError('Token not found', 403)
 		}
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
