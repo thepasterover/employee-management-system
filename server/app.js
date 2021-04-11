@@ -5,6 +5,7 @@ const cors = require('cors')
 const cron = require('node-cron')
 require('dotenv').config()
 
+
 const port = process.env.PORT || 5000
 
 const authRoutes = require('./routes/auth')
@@ -26,6 +27,8 @@ app.use(
 		parameterLimit: 50000,
 	})
 )
+
+app.use('/public', express.static('public'))
 
 mongoose.connect(`mongodb+srv://paste_rover:${process.env.MONGO_PASS}@cluster0.m6ew8.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`, {
 	useNewUrlParser: true,

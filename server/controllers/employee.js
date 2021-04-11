@@ -228,9 +228,48 @@ exports.addWork = async(req, res, next) => {
             price: req.body.price,
             category: req.body.category,
             employee: req.body.employee
-        })
+        }).orFail(
+            new CustomError('Employee not found', 403)
+        )
         res.json({
             message: 'Work added!'
+        })
+    } catch(err) {
+        next(err)
+    }
+}
+
+exports.changeAvatar = async(req, res, next) => {
+    try {
+        if(req.files.file){
+            let file_path ='/public/images/avatars/' + new Date().getTime() + '_' + req.files.file.originalFilename
+            fs.copyFileSync(
+                req.files.file.path,
+                path.join(__dirname, '..', file_path),
+                null,
+                (err) => {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        fs.unlink(req.files.file.path)
+                    }
+                }
+            )
+            await Employee.findByIdAndUpdate(req.id, {
+                avatar: {
+                    name: req.files.file.originalFilename,
+                    size: req.files.file.size,
+                    type: req.files.file.type,
+                    url: file_path
+                }
+            }).orFail(
+                new CustomError('Employee not found', 404)
+            )
+        } else {
+            throw new CustomError('Only files allowed', 403)
+        }
+        res.json({
+            message: 'Avatar Changed'
         })
     } catch(err) {
         console.log(err)

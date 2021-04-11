@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const employeeController = require('../controllers/employee')
+const form_data = require('express-form-data')
 
 
 router.get('/salary', employeeController.getSalaries)
@@ -20,6 +21,8 @@ router.get('/works', employeeController.getWorks)
 router.post('/works/add', employeeController.addWork)
 
 router.post('/profile/update', employeeController.updateProfile)
+
+router.post('/profile/changeavatar', form_data.parse(), employeeController.changeAvatar)
 
 router.post('/profile/resetpassword', employeeController.sendResetPasswordEmail)
 

@@ -34,6 +34,14 @@ const employeeSchema = new Schema({
     state: {
         type: String
     },
+    avatar: {
+        name: String,
+        size: Number,
+        type: {
+            type: String
+        },
+        url: String,
+    },
     salaries: [
         {
             type: Schema.Types.ObjectId,

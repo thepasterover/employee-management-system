@@ -19,27 +19,23 @@
             mdi-close-circle
         </v-icon>
       </template>
-        
       </v-snackbar>
     <h3>My Account</h3>
     <v-row class="mt-2 pa-2" justify="space-around" align-content="space-around">
       <v-col offset=1 offset-md=0 cols=12 md=4 sm=5 class="mb-6">
-        <v-badge
-        icon="mdi-pencil"
-        overlap
-        bottom
-        offset-x="25"
-        offset-y="25"
-        >
-        <v-card shaped>
+        <v-card shaped width="200" flat color="appgrey">
           <v-img 
-          src='https://images.unsplash.com/photo-1511367461989-f85a21fda167?ixid=MXwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfA%3D%3D&ixlib=rb-1.2.1&w=1000&q=80'
+          :src="'http://localhost:5000' + avatar"
           height='200'
           width='200'
+          contain
           >
           </v-img>
         </v-card>
-        </v-badge>
+        <v-btn color="appmainblue" class="white--text text-capitalize mt-2 mx-auto" depressed  @click="$refs.profile.click()">
+          <input type="file" id="file" ref="profile" v-show="false" @change="uploadProfile" />
+          Change Avatar
+        </v-btn>
       </v-col>
       <v-col align-self="center" class="mx-auto">
         <v-form ref="form">
@@ -204,6 +200,8 @@ export default {
       snackbar: false,
       snackbarColor: '#73cfa6',
       message: null,
+      file: null,
+      avatar: this.$auth.$state.user.employee.file ? this.$auth.$state.user.employee.file.url : '/public/images/avatars/default.jpg',
       joinedDate: this.$moment(this.$auth.user.employee.date).format('MMM Do YYYY'),
       designation: this.$auth.user.employee.desg,
       firstName: this.$auth.$state.user.employee.name.split(' ')[0].trim(),
@@ -251,6 +249,18 @@ export default {
           this.snackbarColor = '#73cfa6'
           this.snackbar = true
         }
+      } catch(err) {
+        console.log(err)
+      }
+    },
+
+    async uploadProfile() {
+      try {
+        this.file = this.$refs.profile.files[0]
+        let formData = new FormData()
+        formData.append('file', this.file)
+        let data = await this.$axios.$post('employee/profile/changeavatar', formData)
+        console.log(data)
       } catch(err) {
         console.log(err)
       }
