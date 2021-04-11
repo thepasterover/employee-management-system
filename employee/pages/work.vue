@@ -1,8 +1,11 @@
 <template>
   <div class="pa-1">
     <v-row align-content="space-between" justify="space-between" class="pl-4">
-      <v-col cols=3 md=8>
+      <v-col cols=12 md=8 >
         <h3>My Works</h3>
+      </v-col>
+      <v-col class="ml-12">
+        <add-work @add-work="addToWork" />
       </v-col>
       <v-spacer></v-spacer>
       <v-col md=2 cols=4 class="pl-4 mt-3">
@@ -48,6 +51,8 @@
     :headers=headers
     class="mt-2 pa-2"
     :items=filteredItems
+    :sort-by="['date']"
+    :sort-desc=[true]
     >
       <template v-slot:[`item.total`] = {item}>
         {{item.price * item.quantity}}
@@ -77,8 +82,12 @@
 </template>
 
 <script>
+import addWork from '../components/addWork'
 export default {
   middleware:'auth',
+  components: {
+    addWork
+  },
   head() {
     return{
         title: 'Work'
@@ -90,6 +99,7 @@ export default {
       snackbar: false,
       snackbarColor: '#73cfa6',
       month: null,
+      message: null,
       items: [],
       headers: [
         {text: 'Date', value: 'date', class: 'appgrey--text'},
@@ -105,7 +115,7 @@ export default {
     try {
       let data = await this.$axios.$get('employee/works')
       data.forEach(d => {
-        d.date =  this.$moment(d.date).format('DD MMM YYYY')
+        d.date =  this.$moment(d.date).format('Do MMM YYYY')
       })
       this.items = [...data]
     } catch(err) {
@@ -118,6 +128,12 @@ export default {
       }
     }
   },
+  methods: {
+    addToWork(w) {
+      w.date = this.$moment(w.date).format('Do MMM YYYY')
+      this.items.push(w)
+    }
+  },
 
   computed: {
     filteredItems() {
@@ -128,8 +144,7 @@ export default {
       } else{
         return this.items
       }
-      
-    }
+    },
   }
 }
 </script>

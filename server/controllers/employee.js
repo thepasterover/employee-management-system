@@ -27,9 +27,7 @@ var smtpTransport = nodemailer.createTransport({
 
 exports.getSalaries = async(req, res, next) => {
     try {
-        let salaries = await Salary.find({employee: req.id}).select('-_id date month salary type').orFail(
-            new CustomError('Salaries not found', 404)
-        )
+        let salaries = await Salary.find({employee: req.id}).select('-_id date month salary type')
         res.json({
             salaries
         })
@@ -110,6 +108,7 @@ exports.getCardsData = async(req, res, next) => {
         // Work Sort
 
         let works = await Work.aggregate([
+            {$match: {employee: req.id}},
             {$group: {
                 _id: { month: {$month: '$date'} },
                 total: { $sum : { $multiply: [ '$price', '$quantity' ] } }
@@ -214,12 +213,27 @@ exports.getAttendance = async(req, res, next) => {
 
 exports.getWorks = async(req, res, next) => {
     try {
-        let works = await Work.find({employee: req.id}).select('-_id category date price quantity').orFail(
-            new CustomError('Your works not found', 404)
-            )
+        let works = await Work.find({employee: req.id}).select('-_id category date price quantity').sort('ascending')
         res.json(works)
     } catch(err) {
         next(err)
+    }
+}
+
+exports.addWork = async(req, res, next) => {
+    try {
+        await Work.create({
+            date: req.body.date,
+            quantity: req.body.quantity,
+            price: req.body.price,
+            category: req.body.category,
+            employee: req.body.employee
+        })
+        res.json({
+            message: 'Work added!'
+        })
+    } catch(err) {
+        console.log(err)
     }
 }
 

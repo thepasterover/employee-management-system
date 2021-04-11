@@ -17,6 +17,8 @@ router.get('/home/attendance', employeeController.getAttendance)
 
 router.get('/works', employeeController.getWorks)
 
+router.post('/works/add', employeeController.addWork)
+
 router.post('/profile/update', employeeController.updateProfile)
 
 router.post('/profile/resetpassword', employeeController.sendResetPasswordEmail)
