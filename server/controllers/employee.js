@@ -272,7 +272,7 @@ exports.changeAvatar = async(req, res, next) => {
             message: 'Avatar Changed'
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
