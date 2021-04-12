@@ -46,19 +46,17 @@ exports.employeeLogin = async(req, res, next) => {
     try {
         let email = req.body.email
         let password = req.body.password
+        let user = await Employee.findOne({email: email}).orFail(
+            new CustomError("User not found! Check your credentials", 401)
+        )
 
-        let user = await Employee.findOne({email: email})
-        if(!user){
-            throw new CustomError("User not found! Check your credentials", 401)
-        }
-
-        // let match = await bcrypt.compare(password, user.password)
-        // let token
-        // if(match){
+        let match = await bcrypt.compare(password, user.password)
+        let token
+        if(match){
             token = jwt.sign({ data: user._id }, process.env.JWT_SECRET, { expiresIn: '3d' })
-        // } else {
-        //     throw new CustomError("Incorrect Password", 401)
-        // }
+        } else {
+            throw new CustomError("Incorrect Password", 401)
+        }
 
         res.json(
             token

@@ -5,6 +5,10 @@ const moment = require('moment')
 const nodemailer = require('nodemailer')
 const jwt = require('jsonwebtoken')
 const ejs = require('ejs')
+const imagemin = require('imagemin')
+const imageminJpegtran = require('imagemin-jpegtran')
+const imageminPngquant = require('imagemin-pngquant')
+const imageminMozjpeg  = require('imagemin-mozjpeg')
 
 const Employee = require('../models/employee')
 const Salary = require('../models/salary')
@@ -242,7 +246,18 @@ exports.addWork = async(req, res, next) => {
 exports.changeAvatar = async(req, res, next) => {
     try {
         if(req.files.file){
-            let file_path ='/public/images/avatars/' + new Date().getTime() + '_' + req.files.file.originalFilename
+            let allowedFiles = ['.png', '.jpg']
+            if(!allowedFiles.includes(path.extname(req.files.file.originalFilename))){
+                throw new CustomError('Only .jpg and .png files are allowed!', 406)
+            }
+            let employee = await Employee.findById(req.id).orFail(
+                new CustomError('Employee not found', 404)
+            )
+            let fileName = new Date().getTime() + '_' + req.files.file.originalFilename
+            let file_path ='/public/images/avatars/' + fileName
+            if(employee.avatar.url){
+                fs.unlinkSync(path.join(__dirname, '..', employee.avatar.url))
+            }
             fs.copyFileSync(
                 req.files.file.path,
                 path.join(__dirname, '..', file_path),
@@ -255,22 +270,31 @@ exports.changeAvatar = async(req, res, next) => {
                     }
                 }
             )
-            await Employee.findByIdAndUpdate(req.id, {
-                avatar: {
-                    name: req.files.file.originalFilename,
-                    size: req.files.file.size,
-                    type: req.files.file.type,
-                    url: file_path
-                }
-            }).orFail(
-                new CustomError('Employee not found', 404)
-            )
+            await imagemin([`public/images/avatars/${fileName}`], {
+                destination: path.join(__dirname, '..', '/public/images/avatars'),
+                plugins: [
+                    imageminJpegtran({
+                        quality: 70
+                    }),
+                    imageminPngquant({
+                        quality: [0.6, 0.8]
+                    })
+                ]
+            })
+            
+            employee.avatar.name = req.files.file.originalFilename
+            employee.avatar.size = req.files.file.size
+            employee.avatar.type = req.files.file.type
+            employee.avatar.url = file_path
+            await employee.save()
+            
+            res.json({
+                message: 'Avatar Changed Successfully!',
+                avatar: file_path
+            })
         } else {
             throw new CustomError('Only files allowed', 403)
         }
-        res.json({
-            message: 'Avatar Changed'
-        })
     } catch(err) {
         next(err)
     }

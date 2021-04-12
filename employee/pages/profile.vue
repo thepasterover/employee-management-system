@@ -23,7 +23,7 @@
     <h3>My Account</h3>
     <v-row class="mt-2 pa-2" justify="space-around" align-content="space-around">
       <v-col offset=1 offset-md=0 cols=12 md=4 sm=5 class="mb-6">
-        <v-card shaped width="200" flat color="appgrey">
+        <v-card shaped width="200" flat outlined>
           <v-img 
           :src="'http://localhost:5000' + avatar"
           height='200'
@@ -33,7 +33,7 @@
           </v-img>
         </v-card>
         <v-btn color="appmainblue" class="white--text text-capitalize mt-2 mx-auto" depressed  @click="$refs.profile.click()">
-          <input type="file" id="file" ref="profile" v-show="false" @change="uploadProfile" />
+          <input type="file" id="file" ref="profile" accept="image/*" v-show="false" @change="uploadProfile" />
           Change Avatar
         </v-btn>
       </v-col>
@@ -201,7 +201,7 @@ export default {
       snackbarColor: '#73cfa6',
       message: null,
       file: null,
-      avatar: this.$auth.$state.user.employee.file ? this.$auth.$state.user.employee.file.url : '/public/images/avatars/default.jpg',
+      avatar: this.$auth.$state.user.employee.avatar ? this.$auth.$state.user.employee.avatar.url : '/public/images/avatars/default.jpg',
       joinedDate: this.$moment(this.$auth.user.employee.date).format('MMM Do YYYY'),
       designation: this.$auth.user.employee.desg,
       firstName: this.$auth.$state.user.employee.name.split(' ')[0].trim(),
@@ -250,7 +250,13 @@ export default {
           this.snackbar = true
         }
       } catch(err) {
-        console.log(err)
+        if(err.response){
+          this.message = err.response.data.error
+          this.snackbarColor = 'error'
+          this.snackbar = true
+        } else {
+          console.log(err)
+        }
       }
     },
 
@@ -260,9 +266,18 @@ export default {
         let formData = new FormData()
         formData.append('file', this.file)
         let data = await this.$axios.$post('employee/profile/changeavatar', formData)
-        console.log(data)
+        this.message = data.message
+        this.snackbarColor = '#73cfa6'
+        this.snackbar = true
+        this.avatar = data.avatar
       } catch(err) {
-        console.log(err)
+        if(err.response){
+          this.message = err.response.data.error
+          this.snackbarColor = 'error'
+          this.snackbar = true
+        } else {
+          console.log(err)
+        }
       }
     },
 

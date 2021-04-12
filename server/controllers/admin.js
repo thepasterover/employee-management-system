@@ -7,6 +7,7 @@ const AttendanceDay = require('../models/attendanceDay')
 const Work = require('../models/work')
 const Admin = require('../models/admin')
 const bcrypt = require('bcrypt')
+const CustomError = require('../error')
 
 exports.getEmployees = async(req, res, next) => {
     try{
@@ -21,11 +22,17 @@ exports.getEmployees = async(req, res, next) => {
 
 exports.addEmployee = async(req, res, next) => {
     try {
+        let hash = bcrypt.hashSync('Default2021', 10)
+        let existingEmail = await Employee.findOne({email: req.body.email})
+        if(existingEmail){
+            throw new CustomError('Email already exists!', 406)
+        }
         const employee = await Employee.create({
             date: req.body.date,
             name: req.body.name,
             desg: req.body.desg,
-            email: req.body.email
+            email: req.body.email,
+            password: hash
         })
 
         let cm = moment().format('YYYY-MM')
@@ -40,7 +47,7 @@ exports.addEmployee = async(req, res, next) => {
             message: 'Employee Added'
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
