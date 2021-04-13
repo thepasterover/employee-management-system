@@ -22,13 +22,5 @@ export default {
     attendance
   },
   middleware: 'auth',
-  async created() {
-    try{
-      // let data = await this.$axios.$get('employee/salary')
-      // console.log(data)
-    } catch(err) {
-      console.log(err)
-    }
-  }
 }
 </script>

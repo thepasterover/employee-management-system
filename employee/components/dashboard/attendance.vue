@@ -77,6 +77,7 @@ export default {
       return {
         isChanged: false,
         snackbar: false,
+        message: null,
         snackbarColor: '#73cfa6',
         month: this.$moment().format('YYYY-MM'),
         days: 31
@@ -92,7 +93,13 @@ export default {
           })
           this.days = data ? data.days : null
         } catch(err) {
-          console.log(err)
+          if(err.response){
+            this.message = err.response.data.error
+            this.snackbarColor = 'error'
+            this.snackbar = true
+          } else {
+            console.log(err)
+          }
         }
       }
     },
@@ -105,7 +112,13 @@ export default {
           this.snackbarColor = 'error'
           this.snackbar = true
         } else {
-          console.log(err)
+          if(err.response){
+            this.message = err.response.data.error
+            this.snackbarColor = 'error'
+            this.snackbar = true
+          } else {
+            console.log(err)
+          }
         }
       }
     },

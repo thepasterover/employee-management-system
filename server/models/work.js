@@ -18,6 +18,10 @@ const WorkSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Employee'
     },
+    company: {
+        type: Schema.Types.ObjectId,
+        ref: 'Company'
+    }
 })
 
 module.exports = mongoose.model('Work', WorkSchema)

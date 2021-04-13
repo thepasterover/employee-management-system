@@ -6,6 +6,10 @@ const employeeSchema = new Schema({
         type: Date,
         required: true
     },
+    company: {
+        type: Schema.Types.ObjectId,
+        ref: 'Company'
+    },
     name: {
         type: String,
         required: true

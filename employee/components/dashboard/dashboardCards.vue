@@ -56,6 +56,7 @@ export default {
         isChanged: false,
         snackbar: false,
         snackbarColor: '#73cfa6',
+        message: null,
         items: [
           { icon: 'mdi-chart-line', data: '₹0', title: 'Total Salary', add: '+0₹', color: '#73cfa6', bg_color: '#daf2e6'},
           { icon: 'mdi-chart-box-outline', data: '₹0', title: 'Total Advance', add: '+0₹', color: '#316cf5', bg_color: '#e0eaff'},
