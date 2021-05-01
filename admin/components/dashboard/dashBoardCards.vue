@@ -1,5 +1,28 @@
 <template>
     <div>
+      <v-snackbar
+      v-model="snackbar"
+      :timeout="4000"
+      :color="snackbarColor"
+      top
+      >
+      {{message}}
+      <template v-slot:action="{ attrs }">
+          <v-btn
+          fab
+          color="white"
+          x-small
+          v-bind="attrs"
+          @click="snackbar = false"
+          >
+              <v-icon
+              color="error"
+              size=23>
+                  mdi-close-box
+              </v-icon>
+          </v-btn>
+      </template>
+      </v-snackbar>
     <v-row>
       <v-col v-for="(item, i) in items" :key="i" cols=12 sm=6 md=3>
         <v-card outlined class="mt-3" color="mainpurple">
@@ -33,6 +56,9 @@ export default {
   // DONE: Instead of Salary and Advance sort by categories
   data(){
     return {
+      message: null,
+      snackbarColor: null,
+      snackbar: false,
       totEmps: '00',
       items: [
         { title: 'Total Employees', icon: 'mdi-account-outline', data: null, subtext: 'Employees' },
@@ -79,7 +105,11 @@ export default {
         this.items[3].data = totSal < 10 ? '0' + totSal  : totSal
       }
     } catch(err) {
-      console.log(err)
+      if(err.response){
+        this.snackbarColor = 'error'
+        this.message = err.response.data.error
+        this.snackbar = true
+      }
     }
   },
 }

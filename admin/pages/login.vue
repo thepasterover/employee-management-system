@@ -103,6 +103,8 @@
 export default {
     data() {
         return {
+            message: null,
+            snackbarColor: '#73cfa6',
             resetEmail: null,
             dialog: false,
             hostImageUrl: process.env.HOST_IMAGE_URL,
@@ -148,7 +150,7 @@ export default {
             })
             this.dialog = false
             this.message = data.message
-            this.snackbarColor = 'mainpurple'
+            this.snackbarColor = '#73cfa6'
             this.snackbar = true
             this.resetEmail = null
           } catch(err) {

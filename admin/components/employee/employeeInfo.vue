@@ -1,5 +1,28 @@
 <template>
 	<div>
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="4000"
+      :color="snackbarColor"
+      top
+      >
+      {{message}}
+      <template v-slot:action="{ attrs }">
+          <v-btn
+          fab
+          color="white"
+          x-small
+          v-bind="attrs"
+          @click="snackbar = false"
+          >
+              <v-icon
+              color="error"
+              size=23>
+                  mdi-close-box
+              </v-icon>
+          </v-btn>
+      </template>
+    </v-snackbar>
 		<v-card max-width="600" elevation="0">
       <v-row class="pa-4" justify="space-between">
         <h3 class="textheadpurple--text">Employee Info</h3>
@@ -121,6 +144,9 @@ export default {
   props: ['employeeData'],
   data() {
     return {
+      message: null,
+      snackbarColor: '#73cfa6',
+      snackbar: false,
       hostImageUrl: process.env.HOST_IMAGE_URL,
       show: false,
       password: null,
@@ -149,9 +175,16 @@ export default {
             confPassword: this.confPassword
           })
           this.dialog = false
+          this.message = data.message
+          this.snackbarColor = '#73cfa6'
+          this.snackbar = true
         }
       } catch(err) {
-        console.log(err)
+        if(err.response){
+          this.snackbarColor = 'error'
+          this.message = err.response.data.error
+          this.snackbar = true
+        }
       }
     }
   },

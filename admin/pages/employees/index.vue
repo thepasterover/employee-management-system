@@ -1,5 +1,28 @@
 <template>
   <div class="mt-3 pa-2">
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="4000"
+      :color="snackbarColor"
+      top
+      >
+      {{message}}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+        fab
+        color="white"
+        x-small
+        v-bind="attrs"
+        @click="snackbar = false"
+        >
+          <v-icon
+          color="error"
+          size=23>
+              mdi-close-box
+          </v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
     <v-row justify='end'> 
       <v-col>
         <h2 class="textheadpurple--text"> Employees </h2>
@@ -57,6 +80,9 @@ export default {
   components: { popup },
   data() {
     return {
+      message: null,
+      snackbarColor: '#73cfa6',
+      snackbar: false,
       hostImageUrl: process.env.HOST_IMAGE_URL,
       items: [],
       search: '',
@@ -74,9 +100,15 @@ export default {
           email: e.email,
           password: e.password
         })
-        
+        this.message = data.message
+        this.snackbarColor = '#73cfa6'
+        this.snackbar = true
       } catch(err) {
-        console.log(err)
+        if(err.response){
+          this.snackbarColor = 'error'
+          this.message = err.response.data.error
+          this.snackbar = true
+        }
       }
     },
 
@@ -99,9 +131,12 @@ export default {
         }
         this.items.push(temp)
       }
-      console.log(this.items)
     } catch(err) {
-      console.log(err)
+      if(err.response){
+        this.snackbarColor = 'error'
+        this.message = err.response.data.error
+        this.snackbar = true
+      }
     }
   },
 

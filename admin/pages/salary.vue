@@ -1,5 +1,28 @@
 <template>
   <div>
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="4000"
+      :color="snackbarColor"
+      top
+      >
+      {{message}}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+        fab
+        color="white"
+        x-small
+        v-bind="attrs"
+        @click="snackbar = false"
+        >
+          <v-icon
+          color="error"
+          size=23>
+              mdi-close-box
+          </v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
     <v-data-table
     :headers=headers
     :items=items
@@ -74,10 +97,6 @@
             </template>
         </v-edit-dialog>
       </template>
-
-
-      
-
       <template v-slot:item.actions = {item}>
         <v-icon
         small
@@ -103,6 +122,9 @@ export default {
     },
     data() {
       return {
+        message: null,
+        snackbarColor: '#73cfa6',
+        snackbar: false,
         monthSort : '',
         employees: [
         'Raju Sharma',
@@ -124,18 +146,26 @@ export default {
 
     methods: {
       async getSalaries(){
-        this.items = []
-        let data = await this.$axios.$get('admin/salary')
-        for(let salary of data.salaries) {
-          salary.date = salary.date ? moment(salary.date).format('DD MMM YYYY') : ''
-          salary.month = salary.month ? moment(salary.month).format('MMMM') : ''
-          salary.employee = salary.employee_name
-          this.items.push(salary)
+        try{
+          this.items = []
+          let data = await this.$axios.$get('admin/salary')
+          for(let salary of data.salaries) {
+            salary.date = salary.date ? moment(salary.date).format('DD MMM YYYY') : ''
+            salary.month = salary.month ? moment(salary.month).format('MMMM') : ''
+            salary.employee = salary.employee_name
+            this.items.push(salary)
+          }
+        } catch(err) {
+          if(err.response){
+            this.snackbarColor = 'error'
+            this.message = err.response.data.error
+            this.snackbar = true
+          }
         }
       },
       async addToSalary(e) {
         try{
-          let d = await this.$axios.$post('admin/salary/add', {
+          let data = await this.$axios.$post('admin/salary/add', {
             date: e.date,
             salary: e.salary,
             month: e.month,
@@ -143,10 +173,16 @@ export default {
             employee: e.employee
           })
           this.getSalaries()
+          this.message = data.message
+          this.snackbarColor = '#73cfa6'
+          this.snackbar = true
         } catch(err) {
-          console.log(err)
+          if(err.response){
+            this.snackbarColor = 'error'
+            this.message = err.response.data.error
+            this.snackbar = true
+          }
         }
-        // this.items.push(e)
       },
 
       async deleteSalary(id) {
@@ -155,8 +191,15 @@ export default {
             id: id
           })
           this.getSalaries()
+          this.message = data.message
+          this.snackbarColor = '#73cfa6'
+          this.snackbar = true
         } catch(err) {
-          console.log(err)
+          if(err.response){
+            this.snackbarColor = 'error'
+            this.message = err.response.data.error
+            this.snackbar = true
+          }
         }
       },
     },

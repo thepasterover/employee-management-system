@@ -5,9 +5,8 @@
       <h3 class="pl-2" >{{$auth.$state.user.company}}</h3>
       
       <v-spacer></v-spacer>
-      <!-- <img src="../assets/images/logo.jpg" alt="as_creations_company_logo" height="80px" width="80px"> -->
       <div v-if="$auth.loggedIn">
-        <v-btn @click="$auth.logout()" 
+        <v-btn @click="logoutBtn" 
         depressed
         color="error"
         >Logout</v-btn>
@@ -45,6 +44,16 @@ export default {
           {title: 'Salary', icon: 'mdi-wallet-outline', route:'/salary'},
           {title: 'Profile', icon: 'mdi-account', route: '/profile'}
         ]
+      }
+    },
+    methods: {
+      async logoutBtn() {
+        try {
+          this.$auth.logout()
+          this.router.push('/login')
+        } catch(err) {
+          console.log(err)
+        }
       }
     }
 }

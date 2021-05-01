@@ -62,7 +62,11 @@ export default {
       })
       this.series = [...grandArr]
     } catch(err) {
-      console.log(err)
+      if(err.response){
+        this.snackbarColor = 'error'
+        this.message = err.response.data.error
+        this.snackbar = true
+      }
     }
   }
 }

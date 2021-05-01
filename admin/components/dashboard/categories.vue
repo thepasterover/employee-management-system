@@ -68,6 +68,29 @@
 					<v-divider dark class="mb-2 mt-n2"></v-divider>
 				</div>
 			</v-card>
+			<v-snackbar
+			v-model="snackbar"
+			:timeout="4000"
+			:color="snackbarColor"
+			top
+			>
+			{{message}}
+			<template v-slot:action="{ attrs }">
+				<v-btn
+				fab
+				color="white"
+				x-small
+				v-bind="attrs"
+				@click="snackbar = false"
+				>
+					<v-icon
+					color="error"
+					size=23>
+						mdi-close-box
+					</v-icon>
+				</v-btn>
+			</template>
+			</v-snackbar>
     </div>
 </template>
 
@@ -79,6 +102,9 @@ export default {
 
     data() {
 			return {
+				message: null,
+				snackbarColor: 'false',
+				snackbar: false,
 				dialog: false,
 				category: null,
 				items: [
@@ -91,25 +117,39 @@ export default {
 		async submit() {
 			try {
 				this.dialog = false
-				await this.$axios.$post('admin/category/add', {
+				let data = await this.$axios.$post('admin/category/add', {
 					category: this.category
 				})
 				this.items.push(this.category)
 				this.category = null
+				this.message = data.message
+				this.snackbarColor = '#73cfa6'
+				this.snackbar = true
 			} catch(err) {
-				console.log(err)
+				if(err.response){
+					this.message = err.response.data.error
+					this.snackbarColor = 'error'
+					this.snackbar = true
+				}
 			}
 		},
 
 		async deleteCtg(item) {
 			try {
 				this.dialog = false
-				await this.$axios.$post('admin/category/delete', {
+				let data = await this.$axios.$post('admin/category/delete', {
 					category: item
 				})
 				this.items = this.items.filter(i => i != item)
+				this.message = data.message
+				this.snackbarColor = '#73cfa6'
+				this.snackbar = true
 			} catch {
-				console.log(err)
+				if(err.response){
+					this.message = err.response.data.error
+					this.snackbarColor = 'error'
+					this.snackbar = true
+				}
 			}
 		}
 	}

@@ -32,8 +32,6 @@ router.post('/salary/delete', adminController.delSalary)
 
 router.post('/attendance/update', adminController.updateAttendance)
 
-// router.get('/attendance/temp', adminController.createOneTimeAttendances)
-
 router.get('/attendance/:id', adminController.getAttendances)
 
 // Work Routes
@@ -56,7 +54,6 @@ router.post('/category/delete', adminController.delCategory)
 // Profile Routes
 
 router.post('/profile/update', adminController.updateProfile)
-
 
 router.post('/profile/changelogo', form_data.parse(), adminController.changeCompanyLogo)
 

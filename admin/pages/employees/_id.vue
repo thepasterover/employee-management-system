@@ -1,5 +1,28 @@
 <template>
   <div >
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="4000"
+      :color="snackbarColor"
+      top
+      >
+      {{message}}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+        fab
+        color="white"
+        x-small
+        v-bind="attrs"
+        @click="snackbar = false"
+        >
+          <v-icon
+          color="error"
+          size=23>
+              mdi-close-box
+          </v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
     <edit-dialog  :dialog="dialog" :item="employeeData" @edit-employee="editEmployee"></edit-dialog>
     <v-row class="pa-1 mt-3 pl-3" no-gutters>
       <v-col>
@@ -186,6 +209,9 @@ export default {
   },
   data() {
     return {
+      message: null,
+      snackbarColor: '#73cfa6',
+      snackbar: false,
       dialog: false,
       value: 0,
       employeeData: {},
@@ -228,7 +254,11 @@ export default {
       
       
     } catch(err) {
-      console.log(err)
+      if(err.response){
+        this.snackbarColor = 'error'
+        this.message = err.response.data.error
+        this.snackbar = true
+      }
     }
   },
 
@@ -251,10 +281,16 @@ export default {
           id: day.employees[0]._id,
           status: day.sheetColor
         })
-        
+        this.message = data.message
+        this.snackbarColor = '#73cfa6'
+        this.snackbar = true
         this.getAttendance()
       } catch(err) {
-        console.log(err)
+        if(err.response){
+          this.snackbarColor = 'error'
+          this.message = err.response.data.error
+          this.snackbar = true
+        }
       }
     },
 
@@ -268,7 +304,11 @@ export default {
       this.days = data ? data.days : null
       
       } catch(err){
-        console.log(err)
+        if(err.response){
+          this.snackbarColor = 'error'
+          this.message = err.response.data.error
+          this.snackbar = true
+        }
       } 
     },
 
@@ -293,7 +333,7 @@ export default {
 
     async editEmployee(data){
       try{
-        await this.$axios.$post('admin/employees/edit', {
+        let data = await this.$axios.$post('admin/employees/edit', {
           id: data.id,
           name: data.name,
           date: data.date,
@@ -302,8 +342,16 @@ export default {
           status: data.status
         })
 
+        this.message = data.message
+        this.snackbarColor = '#73cfa6'
+        this.snackbar = true
+
       } catch(err) {
-        console.log(err)
+        if(err.response){
+          this.snackbarColor = 'error'
+          this.message = err.response.data.error
+          this.snackbar = true
+        }
       }
     },
 
@@ -314,9 +362,15 @@ export default {
         })
         
         this.$router.push('/employees')
-        this.$toast.success('Employee Deleted')
+        this.message = data.message
+        this.snackbarColor = '#73cfa6'
+        this.snackbar = true
       } catch(err) {
-        console.log(err)
+        if(err.response){
+          this.snackbarColor = 'error'
+          this.message = err.response.data.error
+          this.snackbar = true
+        }
       }
     },
 
@@ -338,9 +392,15 @@ export default {
           category: w.category,
           employee: this.employeeData
         })
-        
+        this.message = data.message
+        this.snackbarColor = '#73cfa6'
+        this.snackbar = true
       } catch(err) {
-        console.log(err)
+        if(err.response){
+          this.snackbarColor = 'error'
+          this.message = err.response.data.error
+          this.snackbar = true
+        }
       }
     },
 
@@ -355,7 +415,11 @@ export default {
         }
         
       } catch(err) {
-        console.log(err)
+        if(err.response){
+          this.snackbarColor = 'error'
+          this.message = err.response.data.error
+          this.snackbar = true
+        }
       }
     },
 
@@ -364,10 +428,16 @@ export default {
         let data = await this.$axios.$post('admin/work/delete', {
           id: item._id,
         })
-        
         this.getWorks()
+        this.message = data.message
+        this.snackbarColor = '#73cfa6'
+        this.snackbar = true
       } catch(err) {
-        console.log(err)
+        if(err.response){
+          this.snackbarColor = 'error'
+          this.message = err.response.data.error
+          this.snackbar = true
+        }
       }
     }
 
@@ -402,13 +472,7 @@ export default {
     getOustanding() {
       this.outstanding = this.totalWorkDone - (this.salary + this.advance)
       return this.outstanding
-    },
-    getTotalWork() {
-      
-    }
-
-    
-    
+    },   
   },
   
 

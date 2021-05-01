@@ -24,7 +24,7 @@ exports.getEmployees = async(req, res, next) => {
             employees
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -52,7 +52,7 @@ exports.addEmployee = async(req, res, next) => {
             })
         }
         res.json({
-            message: 'Employee Added'
+            message: 'New Employee Created!'
         })
     } catch(err) {
         next(err)
@@ -67,12 +67,14 @@ exports.editEmployee = async(req, res, next) => {
             desg: req.body.desg,
             email: req.body.email,
             status: req.body.status
-        })
+        }).orFail(
+            new CustomError('Employee not found!', 404)
+        )
         res.json({
-            message: 'Employee Edited'
+            message: 'Employee edited successfully!'
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -93,13 +95,15 @@ exports.changePassword = async(req, res, next) => {
             message: 'Password Changed Successfully!'
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
 exports.delEmployee = async(req, res, next) => {
     try {
-        await Employee.findByIdAndDelete(req.body.id)
+        await Employee.findByIdAndDelete(req.body.id).orFail(
+            new CustomError('Employee not found!', 404)
+        )
         let attendances =  await Attendance.find()
         
         for(let a of attendances){
@@ -111,14 +115,16 @@ exports.delEmployee = async(req, res, next) => {
         }
 
         for(let s of employee.salaries){
-            await Salary.findByIdAndDelete(s)
+            await Salary.findByIdAndDelete(s).orFail(
+                new CustomError('Employee deleted but its salaries could not be deleted', 500)
+            )
         }
         
         res.json({
             message: 'Employee deleted'
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -129,7 +135,7 @@ exports.getEmployee = async(req, res, next) => {
             employee
         })
     } catch(err){
-        console.log(err)
+        next(err)
     }
 }
 
@@ -141,13 +147,15 @@ exports.getSalaries = async(req, res, next) => {
             salaries
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
 exports.addSalary = async(req, res, next) => {
     try {
-        const employee = await Employee.findById(req.body.employee)
+        const employee = await Employee.findById(req.body.employee).orFail(
+            new CustomError('Employee not found!', 404)
+        )
         const salary = await Salary.create({
             date: req.body.date,
             salary: req.body.salary,
@@ -160,22 +168,27 @@ exports.addSalary = async(req, res, next) => {
         await employee.save()
 
         res.json({
-            message: 'Salary Added'
+            message: 'New Salary Added!'
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
 exports.delSalary = async(req, res, next) => {
     try {
-        await Salary.findByIdAndDelete(req.body.id)
+        await Salary.findByIdAndDelete(req.body.id).orFail(
+            new CustomError('Salary could not be deleted', 500)
+        )
         await Employee.findOneAndUpdate({salaries: {$in: [req.body.id]}}, {$pull: { salaries :{ $in : req.body.id}}})
+        .orFail(
+            new CustomError('Employee not found!', 404)
+        )
         res.json({
-            message: 'Salary deleted'
+            message: 'Salary deleted successfully!'
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -187,9 +200,6 @@ exports.getAttendances = async(req, res, next) => {
             path: 'days', 
             select: { 'employees': {$elemMatch: {empId: req.params.id}}}
         })
-        // attendance = attendance.days.filter(a => {
-        //     a.employees.filter(e => e.empId.toString() == '5fef20f37677200be4a13d1b')
-        // })
         let flag
         if(attendance){
             for(let a of attendance.days){
@@ -204,7 +214,7 @@ exports.getAttendances = async(req, res, next) => {
         }
         res.json(attendance)
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -218,10 +228,10 @@ exports.updateAttendance = async(req, res, next) => {
         })
         await attendancedays.save()
         res.json({
-            message: 'Status Updated'
+            message: 'Attendance Status Updated'
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -237,7 +247,7 @@ exports.getWorkByDay = async(req, res, next) => {
         ])
         res.json(works)
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -248,7 +258,7 @@ exports.getAllWorks = async(req, res, next) => {
             works
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -259,7 +269,7 @@ exports.getWorksById = async(req, res, next) => {
             works
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -273,10 +283,10 @@ exports.addWork = async(req, res, next) => {
             employee: req.body.employee,
         })
         res.json({
-            message: 'Work Added'
+            message: 'Work Added Successfully!'
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -284,13 +294,15 @@ exports.addWork = async(req, res, next) => {
 exports.delWork = async(req, res, next) => {
     try {
 
-        await Work.findByIdAndDelete(req.body.id)
+        await Work.findByIdAndDelete(req.body.id).orFail(
+            new CustomError('Work could not be deleted', 500)
+        )
         
         res.json({
             message: 'Work deleted'
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -298,12 +310,14 @@ exports.addCategory = async(req, res, next) => {
     try {
         await Admin.findByIdAndUpdate(req.id, {
             $push: {categories: req.body.category}
-        })
+        }).orFail(
+            new CustomError('Admin not found', 404)
+        )
         res.json({
             message: "Category Added"
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -311,12 +325,14 @@ exports.delCategory = async (req, res, next) => {
     try {
         await Admin.findByIdAndUpdate(req.id, {
             $pull: {categories: req.body.category}
-        })
+        }).orFail(
+            new CustomError('Admin not found', 404)
+        )
         res.json({
             message: "Category Deleted"
         })
     } catch(err) {
-        console.log(err)
+        next(err)
     }
 }
 
@@ -326,7 +342,9 @@ exports.updateProfile = async(req, res, next) => {
             name: req.body.name,
             email: req.body.email,
             company: req.body.company
-        })
+        }).orFail(
+            new CustomError('Admin not found!', 404)
+        )
         res.json({
             message: "Profile Updated!"
         })
@@ -357,7 +375,7 @@ exports.changeCompanyLogo = async(req, res, next) => {
                 null,
                 (err) => {
                     if (err) {
-                        console.log(err)
+                        throw new CustomError('Something went wrong!', 500)
                     } else {
                         fs.unlink(req.files.file.path)
                     }

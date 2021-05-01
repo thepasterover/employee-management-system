@@ -136,7 +136,7 @@ export default {
         console.log(formData)
         let data = await this.$axios.$post('admin/profile/changelogo', formData)
         this.message = data.message
-        this.snackbarColor = 'mainpurple'
+        this.snackbarColor = '#73cfa6'
         this.snackbar = true
         this.company_logo = data.company_logo
       } catch(err) {
@@ -150,7 +150,7 @@ export default {
 
     async resetPassword() {
       try {
-        let data = await this.$axios.$post('admin/profile/resetpassword', {
+        let data = await this.$axios.$post('auth/admin/sendresetemail', {
           email: this.$auth.$state.user.email
         })
         this.message = data.message
