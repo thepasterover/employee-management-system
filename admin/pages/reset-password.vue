@@ -104,7 +104,6 @@ export default {
           })
           if(data.flag){
             this.message = data.message
-            console.log(this.message)
             this.snackbarColor = '#73cfa6'
             this.snackbar = true
             setTimeout(() => {

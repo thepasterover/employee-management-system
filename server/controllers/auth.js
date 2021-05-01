@@ -1,18 +1,29 @@
+const fs = require('fs');
+const path = require('path')
+
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const ejs = require('ejs')
+const nodemailer = require('nodemailer')
 
 const CustomError = require('../error')
 
 const Admin = require('../models/admin')
 const Employee = require('../models/employee')
-const Work = require('../models/work')
 
+var smtpTransport = nodemailer.createTransport({
+	service: 'gmail',
+	secure: true,
+	auth: {
+		user: process.env.GMAIL,
+		pass: process.env.GMAIL_APP_PASS,
+	},
+})
 
 exports.adminLogin = async(req, res, next) => {
     try{
         let email = req.body.email
         let password = req.body.password
-        
         let user = await Admin.findOne({email: email})
         if(!user){
             throw new CustomError("User not found! Check your credentials", 401)
@@ -49,7 +60,9 @@ exports.employeeLogin = async(req, res, next) => {
         let user = await Employee.findOne({email: email}).orFail(
             new CustomError("User not found! Check your credentials", 401)
         )
-
+        if(user.status == 'Disabled'){
+            throw new CustomError('Your account has been diabled! Please contact administrator!', 403)
+        }
         let match = await bcrypt.compare(password, user.password)
         let token
         if(match){
@@ -115,7 +128,44 @@ exports.changePasswordEmployee = async(req, res, next) => {
     }
 }
 
-exports.changePasswordAdmin = async(req, res, next) => {
+
+exports.adminsendResetPasswordEmail = async(req, res, next) => {
+    try {
+        let admin = await Admin.findOne({email: req.body.email}).orFail(
+            new CustomError('Email does not exists!', 404)
+        )
+
+        var token = await jwt.sign(
+            {
+                data: admin._id
+            },
+            process.env.JWT_SECRET, 
+            { expiresIn: '15m' }
+        )
+        var mailOptions = {
+            from: process.env.GMAIL_FROM,
+            to: req.body.email,
+            subject: 'Reset Password',
+            html: ejs.compile(
+                    fs.readFileSync(
+                        path.join(__dirname, '..', 'views', 'reset-password.ejs').toString(),
+                        'utf-8'
+                    )
+                )({
+					name: admin.name,
+					link: process.env.CONFIG_DOMAIN_ADMIN + 'reset-password?token=' + token,
+				}),
+        }
+        await smtpTransport.sendMail(mailOptions)
+        res.json({
+            message: 'Reset Password email has been sent!'
+        })
+    } catch(err) {
+        next(err)
+    }
+}
+
+exports.adminChangePassword = async(req, res, next) => {
     try {
         if(req.body.token) {
             let newPass = req.body.password

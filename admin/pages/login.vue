@@ -1,20 +1,20 @@
 <template>
-    <div>
+    <div class="mt-4">
         <v-row justify="center">
-        <v-card height="500" width="500">
-            <v-row justify="center">
+        <v-card height="600" width="500">
+            <v-row justify="center" class="mb-8 mt-2">
                 <v-img
-                :src="hostImageUrl + avatar"
+                :src="hostImageUrl + company_logo"
                 height='200'
                 width='200'
                 contain
                 >
                 </v-img>
             </v-row>
-            <v-row justify="center" class="mt-n8">
+            <v-row justify="center" class="mt-1">
                 <v-card-title class="text-h5">Welcome back, Please Login</v-card-title>
             </v-row>
-            <div class="pa-6 mt-5">
+            <div class="pa-6 mt-2">
                 <v-form ref="form">
                     <v-text-field v-model="email" color="mainpurple" label="Email" :rules="[rules.required, rules.max, rules.email]">
                         Email
@@ -31,17 +31,55 @@
                         Password
                     </v-text-field>
                 </v-form>
-                <v-btn @click="submitInfo" color="mainpurple" class="white--text">Login</v-btn>
+                <v-row justify="space-between" align-content="space-between">
+                    <v-btn @click="submitInfo" color="mainpurple" class="white--text ml-3">Login</v-btn>
+
+                    <v-dialog max-width="600px" v-model="dialog">
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                        depressed
+                        class="error--text text-capitalize subtitle-1"
+                        v-bind="attrs"
+                        v-on="on"
+                        >
+                        Forgot your password?
+                        </v-btn>
+                      </template>
+                      <v-card>
+                        <v-container>
+                          <v-card-title>
+                            <h3>Send Password Email</h3>
+                          </v-card-title>
+                          <v-card-text>
+                            <v-text-field
+                            label="Enter your email"
+                            v-model="resetEmail"
+                            >
+
+                            </v-text-field>
+                          </v-card-text>
+                          <v-row justify="end">
+                            <v-btn
+                            text 
+                            class="mainpurple mb-2 mr-7 mt-n4  white--text text-capitalize"
+                            @click="sendEmail">
+                              Send
+                            </v-btn>
+                          </v-row>
+                        </v-container>
+                      </v-card>
+                    </v-dialog>
+                </v-row>
             </div> 
         </v-card>
         </v-row>
         <v-snackbar
         v-model="snackbar"
         :timeout="4000"
-        color="error"
+        :color="snackbarColor"
         top
         >
-        {{error}}
+        {{message}}
         <template v-slot:action="{ attrs }">
             <v-btn
             fab
@@ -65,8 +103,10 @@
 export default {
     data() {
         return {
+            resetEmail: null,
+            dialog: false,
             hostImageUrl: process.env.HOST_IMAGE_URL,
-            avatar: '/public/images/company_logos/default.jpg',
+            company_logo:  '/public/images/company_logos/default.jpg',
             email: '',
             password: '',
             snackbar: false,
@@ -74,7 +114,7 @@ export default {
             show: false,
             rules: {
                 required: v => !!v || 'Required Field',
-                max: v => (v || '').length <= 25 || 'Max 25 characters',
+                max: v => (v || '').length <= 50 || 'Max 50 characters',
                 email: v => {
                     let pattern = /\S+@\S+\.\S+/
                     return pattern.test(v) || 'Enter a valid email!'
@@ -88,14 +128,37 @@ export default {
                 if(this.$refs.form.validate()){
                     await this.$auth.loginWith('local', {data: {email: this.email, password: this.password}})
                 }
+                setTimeout(() => {
+                this.$router.push('/')
+                }, 2000)
             } catch(err) {
                 if(err.response){
+                    this.snackbarColor = 'error'
+                    this.message = err.response.data.error
                     this.snackbar = true
-                    this.error = err.response.data.error
                 } else {
                     console.log(err)
                 }
             }
+        },
+        async sendEmail() {
+          try {
+            let data = await this.$axios.$post('auth/admin/sendresetemail', {
+              email: this.resetEmail
+            })
+            this.dialog = false
+            this.message = data.message
+            this.snackbarColor = 'mainpurple'
+            this.snackbar = true
+            this.resetEmail = null
+          } catch(err) {
+            if(err.response){
+              console.log(err.response.data.error)
+              this.message = err.response.data.error
+              this.snackbarColor = 'error'
+              this.snackbar = true
+            }
+          }
         }
     }
 }

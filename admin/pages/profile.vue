@@ -136,7 +136,7 @@ export default {
         console.log(formData)
         let data = await this.$axios.$post('admin/profile/changelogo', formData)
         this.message = data.message
-        this.snackbarColor = '#73cfa6'
+        this.snackbarColor = 'mainpurple'
         this.snackbar = true
         this.company_logo = data.company_logo
       } catch(err) {

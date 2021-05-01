@@ -15,6 +15,8 @@ router.post('/employees/add', adminController.addEmployee)
 
 router.post('/employees/edit', adminController.editEmployee)
 
+router.post('/employees/changepassword', adminController.changePassword)
+
 router.post('/employees/delete', adminController.delEmployee)
 
 // Salary Routes
@@ -55,7 +57,6 @@ router.post('/category/delete', adminController.delCategory)
 
 router.post('/profile/update', adminController.updateProfile)
 
-router.post('/profile/resetpassword', adminController.sendResetPasswordEmail)
 
 router.post('/profile/changelogo', form_data.parse(), adminController.changeCompanyLogo)
 

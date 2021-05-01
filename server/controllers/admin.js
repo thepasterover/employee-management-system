@@ -2,9 +2,6 @@ const fs = require('fs');
 const path = require('path')
 
 const moment = require('moment')
-const nodemailer = require('nodemailer')
-const jwt = require('jsonwebtoken')
-const ejs = require('ejs')
 const imagemin = require('imagemin')
 const imageminJpegtran = require('imagemin-jpegtran')
 const imageminPngquant = require('imagemin-pngquant')
@@ -18,14 +15,7 @@ const Admin = require('../models/admin')
 const bcrypt = require('bcrypt')
 const CustomError = require('../error')
 
-var smtpTransport = nodemailer.createTransport({
-	service: 'gmail',
-	secure: true,
-	auth: {
-		user: process.env.GMAIL,
-		pass: process.env.GMAIL_APP_PASS,
-	},
-})
+
 
 exports.getEmployees = async(req, res, next) => {
     try{
@@ -40,7 +30,7 @@ exports.getEmployees = async(req, res, next) => {
 
 exports.addEmployee = async(req, res, next) => {
     try {
-        let hash = bcrypt.hashSync('Default2021', 10)
+        let hash = bcrypt.hashSync(req.body.password, 10)
         let existingEmail = await Employee.findOne({email: req.body.email})
         if(existingEmail){
             throw new CustomError('Email already exists!', 406)
@@ -80,6 +70,27 @@ exports.editEmployee = async(req, res, next) => {
         })
         res.json({
             message: 'Employee Edited'
+        })
+    } catch(err) {
+        console.log(err)
+    }
+}
+
+exports.changePassword = async(req, res, next) => {
+    try {
+        let password = req.body.password
+        let confPassword = req.body.password
+        if(password != confPassword){
+            throw new CustomError('Passwords do no match', 401)
+        }
+        let hash = bcrypt.hashSync(password, 10) 
+        await Employee.findByIdAndUpdate(req.body.id, {
+            password: hash
+        }).orFail(
+            new CustomError('Employee not found!', 404)
+        )
+        res.json({
+            message: 'Password Changed Successfully!'
         })
     } catch(err) {
         console.log(err)
@@ -318,42 +329,6 @@ exports.updateProfile = async(req, res, next) => {
         })
         res.json({
             message: "Profile Updated!"
-        })
-    } catch(err) {
-        next(err)
-    }
-}
-
-exports.sendResetPasswordEmail = async(req, res, next) => {
-    try {
-        let admin = await Admin.findOne({email: req.body.email}).orFail(
-            new CustomError('Email does not exists!', 404)
-        )
-
-        var token = await jwt.sign(
-            {
-                data: admin._id
-            },
-            process.env.JWT_SECRET, 
-            { expiresIn: '15m' }
-        )
-        var mailOptions = {
-            from: process.env.GMAIL_FROM,
-            to: req.body.email,
-            subject: 'Reset Password',
-            html: ejs.compile(
-                    fs.readFileSync(
-                        path.join(__dirname, '..', 'views', 'reset-password.ejs').toString(),
-                        'utf-8'
-                    )
-                )({
-					name: admin.name,
-					link: process.env.CONFIG_DOMAIN_ADMIN + 'reset-password?token=' + token,
-				}),
-        }
-        await smtpTransport.sendMail(mailOptions)
-        res.json({
-            message: 'Reset Password email has been sent!'
         })
     } catch(err) {
         next(err)

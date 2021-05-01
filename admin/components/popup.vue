@@ -42,6 +42,13 @@
             v-model="email"
             :rules="emailRules" 
             >
+            </v-text-field>
+            <v-text-field
+            color="mainpurple"
+            label="Password"
+            v-model="password"
+            :rules="passwordRules" 
+            >
 
             </v-text-field>
             <v-row justify="end">
@@ -65,6 +72,7 @@ export default {
       name: '',
       designation: '',
       email: '',
+      password: null,
       nameRules: [
         v => !!v || 'Name is required',
         v => v.length >= 4 || 'Name must be more than 4 characters'
@@ -80,6 +88,14 @@ export default {
           let pattern = /^\S+@\S+[\.][0-9a-z]+$/
           return pattern.test(v) || 'Enter a valid email!'
         }
+      ],
+      passwordRules: [
+        v => !!v || 'Required Field',
+        v => (v || '').length >= 8 || 'Min 8 characters',
+        v => {
+          let pattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/
+          return pattern.test(v) || 'Min 8 Characters, atleast 1 uppercase, lowercase character and a number!'
+        }
       ]
     }
   },
@@ -90,7 +106,8 @@ export default {
           date: this.joined,
           name: this.name,
           desg: this.designation,
-          email: this.email
+          email: this.email,
+          password: this.password
         }
         this.$emit('add-employee', this.item)
         this.item = null
@@ -98,6 +115,7 @@ export default {
         this.joined = null
         this.name = ''
         this.designation = ''
+        this.password = null
       }
     }
   },

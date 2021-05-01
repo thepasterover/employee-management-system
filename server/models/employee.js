@@ -20,7 +20,8 @@ const employeeSchema = new Schema({
         type: String
     },
     status:{
-        type: String
+        type: String,
+        default: 'Active'
     },
     phone: {
         type: Number

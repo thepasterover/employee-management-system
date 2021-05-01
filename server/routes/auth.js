@@ -10,13 +10,16 @@ router.post('/admin', authController.adminLogin)
 
 router.get('/admin/me', isAdmin, authController.adminMe)
 
-router.post('/admin/change-password', authController.changePasswordAdmin)
+router.post('/admin/change-password', authController.adminChangePassword)
+
+router.post('/admin/sendresetemail', authController.adminsendResetPasswordEmail)
 
 router.post('/employee', authController.employeeLogin)
 
 router.get('/employee/me', isEmployee, authController.employeeMe)
 
 router.post('/employee/change-password', authController.changePasswordEmployee)
+
 
 
 

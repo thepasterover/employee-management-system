@@ -24,12 +24,16 @@
             <v-col class="pa-4 pt-8">
               <NuxtLink :to="`employees/${item.id}`" >
                 <v-avatar
-                  color="mainpurple"
+                  rounded
                   size="95"
                 >
-                <span class="white--text">VJ</span>
+                <v-img
+                  contain
+                  :src="hostImageUrl + item.avatar"
+                  >
+                  </v-img>
                 </v-avatar>
-                <h3 class="mt-6 textheadpurple--text">{{item.name}}</h3>
+                <h3 class="mt-6 textheadpurple--text text-capitalize">{{item.name}}</h3>
               </NuxtLink>
               <h4 class="subtextgrey--text mt-1">{{formattedDate(item.date)}}</h4>
               <v-row class="mt-0" justify="center" align="center">
@@ -53,6 +57,7 @@ export default {
   components: { popup },
   data() {
     return {
+      hostImageUrl: process.env.HOST_IMAGE_URL,
       items: [],
       search: '',
     }
@@ -66,7 +71,8 @@ export default {
           date: e.date,
           name: e.name,
           desg: e.desg,
-          email: e.email
+          email: e.email,
+          password: e.password
         })
         
       } catch(err) {
@@ -88,10 +94,12 @@ export default {
           name: employee.name,
           date: employee.date,
           desg: employee.desg,
-          attendance: employee.attendance
+          attendance: employee.attendance,
+          avatar: employee.avatar ? employee.avatar.url : '/public/images/avatars/default.png'
         }
         this.items.push(temp)
       }
+      console.log(this.items)
     } catch(err) {
       console.log(err)
     }

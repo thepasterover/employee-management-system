@@ -31,12 +31,18 @@
               v-model="item.email"
               >
               </v-text-field>
-              <v-text-field
+              <!-- <v-text-field
               color="mainpurple"
               label="Status" 
               v-model="item.status"
               >
-              </v-text-field>
+              </v-text-field> -->
+              <v-select
+                :items=statusItems
+                v-model="item.status"
+              >
+
+              </v-select>
               <v-row justify="end">
                 <v-btn text class="mainpurple mr-10 mt-3 white--text text-capitalize" @click="submit">Edit Employee</v-btn>
               </v-row>
@@ -54,6 +60,7 @@ export default {
 
   data() {
     return {
+      statusItems: ['Active', 'Inactive', 'Disabled', ],
       joined: null,
       nameRules: [
         v => !!v || 'Name is required',
@@ -77,7 +84,6 @@ export default {
           status: this.item.status,
           desg: this.item.desg
         }
-        
         this.$emit('edit-employee', temp)
         temp = null
         this.dialog = false
@@ -89,6 +95,6 @@ export default {
     formattedDate(){
         return this.joined ? moment(this.joined).format('DD MMM YYYY') : moment(this.item.date).format('DD MMM YYYY')
     }
-  }
+  },
 }
 </script>
