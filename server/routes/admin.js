@@ -1,5 +1,8 @@
 const express = require('express')
 const router = express.Router()
+
+const form_data = require('express-form-data')
+
 const adminController = require('../controllers/admin')
 const auth = require('../middlewares/admin')
 const admin = require('../models/admin')
@@ -47,6 +50,14 @@ router.get('/work/:id', adminController.getWorksById)
 router.post('/category/add', adminController.addCategory)
 
 router.post('/category/delete', adminController.delCategory)
+
+// Profile Routes
+
+router.post('/profile/update', adminController.updateProfile)
+
+router.post('/profile/resetpassword', adminController.sendResetPasswordEmail)
+
+router.post('/profile/changelogo', form_data.parse(), adminController.changeCompanyLogo)
 
 
 module.exports = router

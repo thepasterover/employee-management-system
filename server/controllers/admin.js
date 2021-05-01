@@ -1,4 +1,13 @@
+const fs = require('fs');
+const path = require('path')
+
 const moment = require('moment')
+const nodemailer = require('nodemailer')
+const jwt = require('jsonwebtoken')
+const ejs = require('ejs')
+const imagemin = require('imagemin')
+const imageminJpegtran = require('imagemin-jpegtran')
+const imageminPngquant = require('imagemin-pngquant')
 
 const Employee = require('../models/employee')
 const Salary = require('../models/salary')
@@ -8,6 +17,15 @@ const Work = require('../models/work')
 const Admin = require('../models/admin')
 const bcrypt = require('bcrypt')
 const CustomError = require('../error')
+
+var smtpTransport = nodemailer.createTransport({
+	service: 'gmail',
+	secure: true,
+	auth: {
+		user: process.env.GMAIL,
+		pass: process.env.GMAIL_APP_PASS,
+	},
+})
 
 exports.getEmployees = async(req, res, next) => {
     try{
@@ -291,6 +309,112 @@ exports.delCategory = async (req, res, next) => {
     }
 }
 
+exports.updateProfile = async(req, res, next) => {
+    try {
+        await Admin.findByIdAndUpdate(req.id, {
+            name: req.body.name,
+            email: req.body.email,
+            company: req.body.company
+        })
+        res.json({
+            message: "Profile Updated!"
+        })
+    } catch(err) {
+        next(err)
+    }
+}
+
+exports.sendResetPasswordEmail = async(req, res, next) => {
+    try {
+        let admin = await Admin.findOne({email: req.body.email}).orFail(
+            new CustomError('Email does not exists!', 404)
+        )
+
+        var token = await jwt.sign(
+            {
+                data: admin._id
+            },
+            process.env.JWT_SECRET, 
+            { expiresIn: '15m' }
+        )
+        var mailOptions = {
+            from: process.env.GMAIL_FROM,
+            to: req.body.email,
+            subject: 'Reset Password',
+            html: ejs.compile(
+                    fs.readFileSync(
+                        path.join(__dirname, '..', 'views', 'reset-password.ejs').toString(),
+                        'utf-8'
+                    )
+                )({
+					name: admin.name,
+					link: process.env.CONFIG_DOMAIN_ADMIN + 'reset-password?token=' + token,
+				}),
+        }
+        await smtpTransport.sendMail(mailOptions)
+        res.json({
+            message: 'Reset Password email has been sent!'
+        })
+    } catch(err) {
+        next(err)
+    }
+}
+
+
+exports.changeCompanyLogo = async(req, res, next) => {
+    try {
+        if(req.files.file){
+            let allowedFiles = ['.png', '.jpg']
+            if(!allowedFiles.includes(path.extname(req.files.file.originalFilename))){
+                throw new CustomError('Only .jpg and .png files are allowed!', 406)
+            }
+            let admin = await Admin.findById(req.id).orFail(
+                new CustomError('User not Found!', 404)
+            )
+            let fileName = new Date().getTime() + '_' + req.files.file.originalFilename
+            let file_path ='/public/images/company_logos/' + fileName
+            if(admin.company_logo.url){
+                fs.unlinkSync(path.join(__dirname, '..', admin.company_logo.url))
+            }
+            fs.copyFileSync(
+                req.files.file.path,
+                path.join(__dirname, '..', file_path),
+                null,
+                (err) => {
+                    if (err) {
+                        console.log(err)
+                    } else {
+                        fs.unlink(req.files.file.path)
+                    }
+                }
+            )
+            await imagemin([`public/images/company_logos/${fileName}`], {
+                destination: path.join(__dirname, '..', '/public/images/company_logos'),
+                plugins: [
+                    imageminJpegtran({
+                        quality: 70
+                    }),
+                    imageminPngquant({
+                        quality: [0.6, 0.8]
+                    })
+                ]
+            })
+            admin.company_logo.name = req.files.file.originalFilename
+            admin.company_logo.size = req.files.file.size
+            admin.company_logo.type = req.files.file.type
+            admin.company_logo.url = file_path
+            await admin.save()
+            res.json({
+                message: 'Logo Changed Successfully!',
+                company_logo: file_path
+            })
+        } else {
+            throw new CustomError('Only files allowed', 403)
+        }
+    } catch(err) {
+        next(err)
+    }
+}
 
 
 

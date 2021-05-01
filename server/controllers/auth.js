@@ -114,3 +114,37 @@ exports.changePasswordEmployee = async(req, res, next) => {
         next(err)
     }
 }
+
+exports.changePasswordAdmin = async(req, res, next) => {
+    try {
+        if(req.body.token) {
+            let newPass = req.body.password
+            let confirmPass = req.body.confPassword
+            let id = null
+            try {
+				let decodedToken = await jwt.verify(
+					req.body.token,
+					process.env.JWT_SECRET
+				)
+				id = decodedToken.data
+			} catch (err) {
+				throw new CustomError('Token Expired or Not Authorized', 403)
+			}
+            if (newPass != confirmPass) {
+				throw new CustomError("Password doesn't match", 400)
+			}
+            let hash = bcrypt.hashSync(req.body.password, 10)
+            await Admin.findByIdAndUpdate(id, {
+                password: hash
+            }).orFail('Admin not found!', 404)
+            res.json({
+                message: 'Password reset successfully! You will be redirected to homepage soon',
+                flag: true
+            })
+        } else {
+            throw new CustomError('Token not found', 403)
+        }
+    } catch(err) {
+        next(err)
+    }
+}

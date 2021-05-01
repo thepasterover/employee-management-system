@@ -4,7 +4,12 @@
       <v-card height="500" width="500" elevation="0">
         <div v-if="!$auth.loggedIn" >
           <v-row justify="center">
-              <img src="~/assets/images/logo.jpg" alt="company_logo" height="180px" width="180px">
+              <v-img :src="hostImageUrl + avatar" 
+              alt="company_logo" 
+              height="180px" 
+              width="180px"
+              contain>
+              </v-img>
           </v-row>
           </div>
           <v-row justify="center" class="mt-n6" :class="{'mt-16 mb-5 pt-15': $auth.loggedIn}">
@@ -14,18 +19,17 @@
               <v-form ref="form">
                   <v-text-field 
                   v-model="password" 
-                  color="appmainblue" 
+                  color="mainpurple" 
                   label="Password" 
                   :rules="[rules.required, rules.min, rules.passwordRegex]"
                   :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
                   :type="show ? 'text' : 'password'"
                   @click:append="show = !show"
                   >
-                      Email
                   </v-text-field>
                   <v-text-field 
                   v-model="confPassword" 
-                  color="appmainblue" 
+                  color="mainpurple" 
                   label="Confirm Passord" 
                   :rules="[rules.required, rules.min, rules.matchPassword,]"
                   :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
@@ -34,7 +38,7 @@
                   >
                   </v-text-field>
               </v-form>
-              <v-btn @click="submit"  color="appmainblue" depressed class="white--text">Submit</v-btn>
+              <v-btn @click="submit"  color="mainpurple" depressed class="white--text">Submit</v-btn>
           </div> 
       </v-card>
       </v-row>
@@ -70,6 +74,8 @@ export default {
   },
   data() {
     return {
+      hostImageUrl: process.env.HOST_IMAGE_URL,
+      avatar: '/public/images/company_logos/default.jpg',
       password: null,
       confPassword: null,
       snackbar: false,
@@ -87,21 +93,18 @@ export default {
       }
     }
   },
-  async created() {
-    console.log(this.$route.query.token)
-    this.$store.commit('head/set', 'Reset Password')
-  },
   methods: {
     async submit(){
       try {
         if(this.$refs.form.validate()){
-          let data = await this.$axios.$post('auth/employee/change-password', {
+          let data = await this.$axios.$post('auth/admin/change-password', {
             token: this.$route.query.token,
             password: this.password,
             confPassword: this.confPassword
           })
           if(data.flag){
             this.message = data.message
+            console.log(this.message)
             this.snackbarColor = '#73cfa6'
             this.snackbar = true
             setTimeout(() => {

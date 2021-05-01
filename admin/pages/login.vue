@@ -3,7 +3,13 @@
         <v-row justify="center">
         <v-card height="500" width="500">
             <v-row justify="center">
-                <img src="~/assets/images/logo.jpg" alt="as_creations_company_logo" height="180px" width="180px">
+                <v-img
+                :src="hostImageUrl + avatar"
+                height='200'
+                width='200'
+                contain
+                >
+                </v-img>
             </v-row>
             <v-row justify="center" class="mt-n8">
                 <v-card-title class="text-h5">Welcome back, Please Login</v-card-title>
@@ -59,6 +65,8 @@
 export default {
     data() {
         return {
+            hostImageUrl: process.env.HOST_IMAGE_URL,
+            avatar: '/public/images/company_logos/default.jpg',
             email: '',
             password: '',
             snackbar: false,
@@ -68,7 +76,7 @@ export default {
                 required: v => !!v || 'Required Field',
                 max: v => (v || '').length <= 25 || 'Max 25 characters',
                 email: v => {
-                    let pattern = /^[\w.+\-]+@abarnasports\.com$/
+                    let pattern = /\S+@\S+\.\S+/
                     return pattern.test(v) || 'Enter a valid email!'
                 }
             }

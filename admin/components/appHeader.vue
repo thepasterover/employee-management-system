@@ -1,8 +1,8 @@
 <template>
-  <div> 
+  <div v-if="$auth.loggedIn"> 
     <v-toolbar class="px-2" width="100%">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <h3 class="pl-2" >Abarna Sports wear</h3>
+      <h3 class="pl-2" >{{$auth.$state.user.company}}</h3>
       
       <v-spacer></v-spacer>
       <!-- <img src="../assets/images/logo.jpg" alt="as_creations_company_logo" height="80px" width="80px"> -->
@@ -43,6 +43,7 @@ export default {
           {title: 'Home', icon: 'mdi-home-variant-outline', route: '/'},
           {title: 'Employees', icon: 'mdi-account-group-outline', route:'/employees'},
           {title: 'Salary', icon: 'mdi-wallet-outline', route:'/salary'},
+          {title: 'Profile', icon: 'mdi-account', route: '/profile'}
         ]
       }
     }

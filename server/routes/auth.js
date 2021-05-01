@@ -10,10 +10,14 @@ router.post('/admin', authController.adminLogin)
 
 router.get('/admin/me', isAdmin, authController.adminMe)
 
+router.post('/admin/change-password', authController.changePasswordAdmin)
+
 router.post('/employee', authController.employeeLogin)
 
 router.get('/employee/me', isEmployee, authController.employeeMe)
 
 router.post('/employee/change-password', authController.changePasswordEmployee)
+
+
 
 module.exports = router
