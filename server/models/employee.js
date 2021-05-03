@@ -23,6 +23,9 @@ const employeeSchema = new Schema({
         type: String,
         default: 'Active'
     },
+    company: {
+        type: String
+    },
     phone: {
         type: Number
     },

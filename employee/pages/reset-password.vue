@@ -3,9 +3,9 @@
       <v-row justify="center" align="center">
       <v-card height="500" width="500" elevation="0">
         <div v-if="!$auth.loggedIn" >
-          <v-row justify="center">
-              <img src="~/assets/images/logo.jpg" alt="company_logo" height="180px" width="180px">
-          </v-row>
+            <v-row justify="center" class="mt-8 mb-8">
+              <h1>Reset Password</h1>
+            </v-row>
           </div>
           <v-row justify="center" class="mt-n6" :class="{'mt-16 mb-5 pt-15': $auth.loggedIn}">
               <v-card-title class="text-h5">Reset Password</v-card-title>

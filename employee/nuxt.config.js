@@ -1,10 +1,7 @@
 import colors from 'vuetify/es5/util/colors'
+require('dotenv').config()
 
 export default {
-  mode: 'spa',
-  router: {
-    base: '/employee-management-system/'
-  },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     titleTemplate: '%s / Employee',
@@ -52,12 +49,13 @@ export default {
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     '@nuxtjs/auth-next',
-    '@nuxtjs/moment'
+    '@nuxtjs/moment',
+    '@nuxtjs/dotenv',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: 'https://employeesys.herokuapp.com/api/' ||'http://localhost:5000/api/'
+    baseURL: process.env.SERVER_BASE_URL
   },
 
   auth: {

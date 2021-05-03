@@ -13,7 +13,8 @@ const AttendanceDay = require('../models/attendanceDay')
 const Work = require('../models/work')
 const Admin = require('../models/admin')
 const bcrypt = require('bcrypt')
-const CustomError = require('../error')
+const CustomError = require('../error');
+const admin = require('../models/admin');
 
 
 
@@ -30,6 +31,7 @@ exports.getEmployees = async(req, res, next) => {
 
 exports.addEmployee = async(req, res, next) => {
     try {
+        let admin = await Admin.findById(req.id)
         let hash = bcrypt.hashSync(req.body.password, 10)
         let existingEmail = await Employee.findOne({email: req.body.email})
         if(existingEmail){
@@ -40,7 +42,8 @@ exports.addEmployee = async(req, res, next) => {
             name: req.body.name,
             desg: req.body.desg,
             email: req.body.email,
-            password: hash
+            password: hash,
+            company: admin.company
         })
 
         let cm = moment().format('YYYY-MM')
@@ -345,6 +348,9 @@ exports.updateProfile = async(req, res, next) => {
         }).orFail(
             new CustomError('Admin not found!', 404)
         )
+        await Employee.updateMany({}, {
+            $set: { 'company': req.body.company }
+        })
         res.json({
             message: "Profile Updated!"
         })

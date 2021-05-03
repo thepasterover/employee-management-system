@@ -10,6 +10,7 @@ const CustomError = require('../error')
 
 const Admin = require('../models/admin')
 const Employee = require('../models/employee')
+const Category = require('../models/category')
 
 var smtpTransport = nodemailer.createTransport({
 	service: 'gmail',
@@ -84,8 +85,10 @@ exports.employeeMe = async(req, res, next) => {
         let employee = await Employee.findById(req.id).populate('salaries').orFail(
             new CustomError('Employee not found', 404)
         )
+        let categories = await Category.find()
         let user = {
             employee: employee,
+            categories: categories
         }
         res.json({user: user})
     } catch(err) {

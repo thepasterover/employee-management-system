@@ -14,7 +14,7 @@
             <v-list-item-title class="appmainblue--text" @click="$store.commit('head/set', 'Overview')">
               
               <v-icon class="mb-1 px-2" color="appmainblue">mdi-shopping-outline</v-icon>
-              Abarna Sports Wear
+              {{$auth.$state.user.employee.company}}
               
             </v-list-item-title>
             </NuxtLink>
@@ -44,7 +44,7 @@
       
       <template v-slot:append>
         <div v-if="$auth.loggedIn" class="text-center pb-6">
-          <v-btn @click="$auth.logout()" 
+          <v-btn @click="logoutFn" 
           depressed
           class="error--text"
           >
@@ -72,6 +72,12 @@ export default {
         ]
       }
     },
+    methods: {
+      logoutFn() {
+        this.$auth.logout()
+        this.$router.push('/login')
+      }
+    }
 }
 </script>
 

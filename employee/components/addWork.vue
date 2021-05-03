@@ -44,6 +44,8 @@
                 :items=categories
                 label="Category"
                 color="appmainblue"
+                item-text="category"
+                item-value="category"
                 v-model="category"
                 :rules="[rules.required]"
               >
@@ -91,10 +93,7 @@ export default {
       quantity: null,
       price: null,
       category: null,
-      categories: [
-        'Tshirt',
-        'Shorts'
-      ],
+      categories: this.$auth.$state.user.categories,
       rules: {
         required: v => !!v || 'Required Field.',
         number: v => !!Number.isInteger(Number(v)) || 'Enter a valid Number',

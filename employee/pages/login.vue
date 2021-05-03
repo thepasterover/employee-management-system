@@ -1,11 +1,11 @@
 <template>
-    <div class="mt-10">
+    <div class="mt-16">
         <v-row justify="center">
         <v-card height="500" width="500" elevation="0">
-            <v-row justify="center">
-                <img src="~/assets/images/logo.jpg" alt="as_creations_company_logo" height="180px" width="180px">
+            <v-row justify="center" class="mt-8 mb-8">
+                <h1>Employee Login</h1>
             </v-row>
-            <v-row justify="center" class="mt-n8">
+            <v-row justify="center" class="mt-2">
                 <v-card-title class="text-h5">Welcome back, Please Login</v-card-title>
             </v-row>
             <div class="pa-6 mt-7">

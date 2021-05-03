@@ -4,7 +4,7 @@
       <v-col cols=12 md=8 >
         <h3>My Works</h3>
       </v-col>
-      <v-col class="ml-12">
+      <v-col class="mx-auto">
         <add-work @add-work="addToWork" />
       </v-col>
       <v-spacer></v-spacer>

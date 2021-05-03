@@ -54,7 +54,7 @@ export default {
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
   axios: {
-    baseURL:  process.env.BASE_URL || 'https://employeesys.herokuapp.com/api/' 
+    baseURL:  process.env.BASE_URL 
   },
 
   auth: {

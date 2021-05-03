@@ -232,9 +232,7 @@ exports.addWork = async(req, res, next) => {
             price: req.body.price,
             category: req.body.category,
             employee: req.body.employee
-        }).orFail(
-            new CustomError('Employee not found', 403)
-        )
+        })
         res.json({
             message: 'Work added!'
         })

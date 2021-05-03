@@ -1,17 +1,11 @@
 <template>
     <div class="mt-4">
-        <v-row justify="center">
-        <v-card height="600" width="500">
-            <v-row justify="center" class="mb-8 mt-2">
-                <v-img
-                :src="hostImageUrl + company_logo"
-                height='200'
-                width='200'
-                contain
-                >
-                </v-img>
+        <v-row justify="center" align-content="center">
+        <v-card height="600" width="500" class="mt-8">
+            <v-row justify="center" class="mb-8 mt-4">
+                <h1>Admin Login</h1>
             </v-row>
-            <v-row justify="center" class="mt-1">
+            <v-row justify="center" class="mt-4">
                 <v-card-title class="text-h5">Welcome back, Please Login</v-card-title>
             </v-row>
             <div class="pa-6 mt-2">
@@ -129,10 +123,10 @@ export default {
             try{
                 if(this.$refs.form.validate()){
                     await this.$auth.loginWith('local', {data: {email: this.email, password: this.password}})
+                    setTimeout(() => {
+                      this.$router.push('/')
+                    }, 1000)
                 }
-                setTimeout(() => {
-                this.$router.push('/')
-                }, 2000)
             } catch(err) {
                 if(err.response){
                     this.snackbarColor = 'error'
