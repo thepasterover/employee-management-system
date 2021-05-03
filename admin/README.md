@@ -2,6 +2,8 @@
 
 Admin Pages - A Fully Responsive Employee Management System built with Vue and NodeJS 
 
+**IMPORTANT: ADD ONE OR MULTIPLE ADMINS IN THE SERVER MANUALLY. THIS IS TO AVOID ANY POTENTIAL SECURITY ISSUES.**
+
  - [Report  Bug](https://github.com/thepasterover/employee-management-system/issues)
  - [Request Feature](https://github.com/thepasterover/employee-management-system/issues)
 
@@ -18,7 +20,16 @@ Table of contents
 
 ## About the Project
 
+![image](https://user-images.githubusercontent.com/50194033/116890223-02892880-ac4b-11eb-89cb-3e833a7e3a62.png)
+
+![image](https://user-images.githubusercontent.com/50194033/116890269-10d74480-ac4b-11eb-9526-b9626124d9c1.png)
+
+![image](https://user-images.githubusercontent.com/50194033/116890306-1af94300-ac4b-11eb-88b7-a9031949a80f.png)
+
+
 This project is a fully responsive part of employee management system for an admin of the company built using Vue and Vuetify. This is an system built keeping in mind the modern design as well as the functionality needed for an Admin to handle its employees records and data.
+
+
 
 Features:
 - View basic details such as Total Employees, total Work, Salary etc on that month.
